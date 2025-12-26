@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAFI - Punto de Venta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <!-- ========== LOGIN ========== -->
+  <div id="login-screen" class="screen login-screen">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="logo-icon">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="20" fill="url(#grad)"/>
+            <path d="M30 65V35c0-5.523 4.477-10 10-10h20c5.523 0 10 4.477 10 10v30c0 5.523-4.477 10-10 10H40c-5.523 0-10-4.477-10-10z" fill="#fff" fill-opacity=".2"/>
+            <path d="M35 50h30M50 35v30" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+            <defs><linearGradient id="grad" x1="0" y1="0" x2="100" y2="100"><stop stop-color="#2D3DBF"/><stop offset="1" stop-color="#6C2BD9"/></linearGradient></defs>
+          </svg>
+        </div>
+        <h1>CAFI</h1>
+        <p>Sistema Punto de Venta</p>
+      </div>
+      <form id="login-form" class="login-form">
+        <div class="field">
+          <label for="login-email">Correo electrónico</label>
+          <div class="input-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="login-email" placeholder="usuario@empresa.com" required autocomplete="email">
+          </div>
+        </div>
+        <div class="field">
+          <label for="login-password">Contraseña</label>
+          <div class="input-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+        </div>
+        <div id="login-error" class="error-msg"></div>
+        <button type="submit" id="login-btn" class="btn btn-primary btn-block">
+          <span>Iniciar Sesión</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+      <footer>© 2024 CAFI POS</footer>
+    </div>
+  </div>
+  
+  <!-- ========== LOADING ========== -->
+  <div id="loading-screen" class="screen loading-screen" style="display:none">
+    <div class="loading-content">
+      <div class="logo-icon">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" rx="20" fill="url(#grad2)"/>
+          <path d="M30 65V35c0-5.523 4.477-10 10-10h20c5.523 0 10 4.477 10 10v30c0 5.523-4.477 10-10 10H40c-5.523 0-10-4.477-10-10z" fill="#fff" fill-opacity=".2"/>
+          <path d="M35 50h30M50 35v30" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+          <defs><linearGradient id="grad2" x1="0" y1="0" x2="100" y2="100"><stop stop-color="#2D3DBF"/><stop offset="1" stop-color="#6C2BD9"/></linearGradient></defs>
+        </svg>
+      </div>
+      <h1>CAFI</h1>
+      <div class="loader"></div>
+      <p>Cargando datos...</p>
+    </div>
+  </div>
+
+  <!-- ========== APP PRINCIPAL ========== -->
+  <div id="app" class="app" style="display:none">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <div class="logo-icon small">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100" height="100" rx="20" fill="url(#grad3)"/>
+              <path d="M35 50h30M50 35v30" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+              <defs><linearGradient id="grad3" x1="0" y1="0" x2="100" y2="100"><stop stop-color="#2D3DBF"/><stop offset="1" stop-color="#6C2BD9"/></linearGradient></defs>
+            </svg>
+          </div>
+          <span>CAFI</span>
+        </div>
+      </div>
+      <div class="header-center">
+        <button class="hbtn" onclick="nuevaVenta()" title="Nueva venta (Ctrl+N)">
+          <i class="fas fa-plus"></i><span>Nueva</span>
+        </button>
+        <button class="hbtn warning" onclick="abrirVentasEnEspera()" title="Ventas en espera (F8)">
+          <i class="fas fa-clock"></i><span>Espera</span><b id="espera-badge"></b>
+        </button>
+        <button class="hbtn" onclick="abrirModal('modal-productos')" title="Administrar productos">
+          <i class="fas fa-box"></i><span>Productos</span>
+        </button>
+        <button class="hbtn" onclick="abrirModal('modal-clientes')" title="Administrar clientes">
+          <i class="fas fa-users"></i><span>Clientes</span>
+        </button>
+        <button class="hbtn icon-only" onclick="sincronizarManual()" title="Sincronizar datos">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </div>
+      <div class="header-right">
+        <div class="user-pill" onclick="mostrarInfoUsuario()">
+          <div class="avatar" id="user-avatar">US</div>
+          <div class="user-text">
+            <span id="user-name">Usuario</span>
+            <small id="user-sucursal">Sucursal</small>
+          </div>
+        </div>
+        <button class="hbtn danger icon-only" onclick="cerrarSesion()" title="Cerrar sesión">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </header>
+    
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      
+      <!-- PANEL IZQUIERDO: CARRITO -->
+      <section class="panel-cart">
+        
+        <!-- BARRA DE VENTA -->
+        <div class="sale-bar">
+          <div class="sale-client" onclick="abrirModalSeleccionarCliente()">
+            <i class="fas fa-user-circle"></i>
+            <div>
+              <small>Cliente</small>
+              <strong id="cliente-nombre">Público General</strong>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="sale-type">
+            <button class="active" id="btn-contado" onclick="setTipoVenta('CONTADO')">Contado</button>
+            <button id="btn-credito" onclick="setTipoVenta('CREDITO')">Crédito</button>
+          </div>
+          <div class="sale-price">
+            <label>Precio</label>
+            <select id="precio-tipo-select" onchange="cambiarTipoPrecio(this.value)">
+              <option value="1">P1</option>
+              <option value="2">P2</option>
+              <option value="3">P3</option>
+              <option value="4">P4</option>
+              <option value="5">P5</option>
+              <option value="6">P6</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- BARRA DE BÚSQUEDA -->
+        <div class="search-bar">
+          <div class="search-input">
+            <i class="fas fa-barcode"></i>
+            <input type="text" id="barcode" placeholder="Escanea código de barras o presiona F2 para buscar..." autofocus>
+          </div>
+          <button class="btn btn-primary" onclick="abrirModalBusqueda()">
+            <i class="fas fa-search"></i>
+            <span>Buscar</span>
+            <kbd>F2</kbd>
+          </button>
+        </div>
+        
+        <!-- TABLA CARRITO -->
+        <div class="cart-wrapper">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th class="col-name">Producto</th>
+                <th class="col-price">Precio</th>
+                <th class="col-qty">Cantidad</th>
+                <th class="col-unit">Und</th>
+                <th class="col-total">Importe</th>
+                <th class="col-actions"></th>
+              </tr>
+            </thead>
+            <tbody id="cart-body"></tbody>
+          </table>
+          <div class="cart-empty" id="cart-empty">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Escanea o busca productos para agregar</p>
+            <small>Usa el lector de códigos o presiona <kbd>F2</kbd></small>
+          </div>
+        </div>
+        
+        <!-- FOOTER CARRITO -->
+        <div class="cart-footer">
+          <div class="cart-actions">
+            <button class="btn btn-outline" onclick="solicitarAccionAdmin('cancelar')" title="Cancelar venta (F4)">
+              <i class="fas fa-times"></i>
+              <span>Cancelar</span>
+              <kbd>F4</kbd>
+            </button>
+            <button class="btn btn-warning" onclick="ponerEnEspera()" title="Poner en espera (F8)">
+              <i class="fas fa-pause"></i>
+              <span>Espera</span>
+            </button>
+            <button class="btn btn-success btn-lg" onclick="abrirModalCobro()" title="Cobrar venta (F12)">
+              <i class="fas fa-cash-register"></i>
+              <span>Cobrar</span>
+              <kbd>F12</kbd>
+            </button>
+          </div>
+        </div>
+      </section>
+      
+      <!-- PANEL DERECHO: RESUMEN -->
+      <aside class="panel-payment">
+        <div class="total-header">
+          <span>Total a Pagar</span>
+          <strong id="total-display">$0.00</strong>
+        </div>
+        
+        <div class="payment-section">
+          <h4>Resumen de Venta</h4>
+          <div class="payment-info">
+            <div class="info-row"><span>Artículos</span><span id="r-items">0</span></div>
+            <div class="info-row"><span>Subtotal</span><span id="r-subtotal">$0.00</span></div>
+            <div class="info-row"><span>Descuentos</span><span id="r-descuentos">$0.00</span></div>
+            <div class="info-row"><span>Tipo</span><span id="r-tipo">Contado</span></div>
+          </div>
+        </div>
+        
+        <div class="payment-section ticket-info">
+          <div class="ticket-row">
+            <i class="fas fa-receipt"></i>
+            <div>
+              <span>Ticket</span>
+              <strong id="ticket-num">#0001</strong>
+            </div>
+          </div>
+          <div class="ticket-row">
+            <i class="fas fa-user"></i>
+            <div>
+              <span>Cliente</span>
+              <strong id="r-cliente">Público General</strong>
+            </div>
+          </div>
+        </div>
+        
+        <input type="hidden" id="efectivo" value="0">
+        <input type="hidden" id="total-amount" value="0">
+        <input type="hidden" id="r-productos" value="0">
+        <div id="cambio-box" style="display:none"><span id="cambio">$0.00</span></div>
+        <div id="metodos-pago-grid" style="display:none"></div>
+      </aside>
+    </main>
+    
+    <!-- SHORTCUTS BAR -->
+    <div class="shortcuts-bar">
+      <span><kbd>F2</kbd> Buscar</span>
+      <span><kbd>F4</kbd> Cancelar</span>
+      <span><kbd>F8</kbd> Espera</span>
+      <span><kbd>F12</kbd> Cobrar</span>
+      <span><kbd>Esc</kbd> Cerrar</span>
+    </div>
+  </div>
+  
+  <!-- MODALES -->
+  <!-- Se cargan desde modals.html -->
+  <div id="modals-container"></div>
+  
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
