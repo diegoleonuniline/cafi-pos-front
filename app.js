@@ -26,7 +26,7 @@ const State = {
 // Utilidades
 const Utils = {
   $(id) { return document.getElementById(id); },
-formatMoney(n) { return '$' + (parseFloat(n) || 0).toFixed(2); },
+  formatMoney(n) { return '$' + (parseFloat(n) || 0).toFixed(2); },
   getIniciales(n) {
     if (!n) return 'US';
     return n.split(' ').slice(0, 2).map(p => p[0] || '').join('').toUpperCase();
@@ -296,7 +296,7 @@ const Cart = {
   agregar(producto, cantidad = null) {
     cantidad = cantidad || parseInt(Utils.$('busqueda-cantidad')?.value) || 1;
     cantidad = Math.round(cantidad);
-    const precio = producto['Precio' + State.tipoPrecioActual] || producto.Precio1 || 0;
+    const precio = parseFloat(producto['Precio' + State.tipoPrecioActual]) || parseFloat(producto.Precio1) || 0;
     
     const existe = State.carrito.find(item => item.ProductoID === producto.ProductoID);
     
@@ -353,7 +353,7 @@ const Cart = {
     State.carrito.forEach(item => {
       const p = Utils.buscarEnArray(State.productos, 'ProductoID', item.ProductoID);
       if (p) {
-        item.precioUnitario = p['Precio' + State.tipoPrecioActual] || p.Precio1 || 0;
+        item.precioUnitario = parseFloat(p['Precio' + State.tipoPrecioActual]) || parseFloat(p.Precio1) || 0;
         item.subtotal = item.cantidad * item.precioUnitario;
       }
     });
@@ -461,7 +461,7 @@ const Venta = {
       } else {
         Toast.error(res.error || 'Error');
       }
-    } catch {
+    } catch (e) {
       Toast.error('Error de conexión');
     }
   },
@@ -473,7 +473,7 @@ const Venta = {
       const badge = Utils.$('espera-badge');
       badge.textContent = State.ventasEnEspera.length || '';
       badge.style.display = State.ventasEnEspera.length ? 'flex' : 'none';
-    } catch {}
+    } catch (e) {}
   },
 
   renderEnEspera() {
@@ -676,7 +676,7 @@ const Cobro = {
       } else {
         Toast.error(res.error || 'Error al procesar');
       }
-    } catch {
+    } catch (e) {
       Toast.error('Error de conexión');
     } finally {
       btn.disabled = false;
@@ -947,7 +947,7 @@ const CRUDProductos = {
       } else {
         Toast.error(res.error || 'Error');
       }
-    } catch {
+    } catch (e) {
       Toast.error('Error de conexión');
     } finally {
       btn.disabled = false;
@@ -967,7 +967,7 @@ const CRUDProductos = {
       } else {
         Toast.error(res.error || 'Error');
       }
-    } catch {
+    } catch (e) {
       Toast.error('Error de conexión');
     }
   }
@@ -1071,7 +1071,7 @@ const CRUDClientes = {
       } else {
         Toast.error(res.error || 'Error');
       }
-    } catch {
+    } catch (e) {
       Toast.error('Error de conexión');
     } finally {
       btn.disabled = false;
@@ -1091,7 +1091,7 @@ const CRUDClientes = {
       } else {
         Toast.error(res.error || 'Error');
       }
-    } catch {
+    } catch (e) {
       Toast.error('Error de conexión');
     }
   }
@@ -1140,7 +1140,7 @@ function renderListaProductos(lista) {
   }
   
   tbody.innerHTML = lista.map(p => {
-    const precio = p['Precio' + tp] || p.Precio1 || 0;
+    const precio = parseFloat(p['Precio' + tp]) || parseFloat(p.Precio1) || 0;
     return `
       <tr onclick="agregarProductoPorID('${p.ProductoID}')">
         <td class="col-code">${p.CodigoBarras || '---'}</td>
@@ -1217,7 +1217,7 @@ function abrirModalCambiarPrecio(index) {
   if (producto && preciosDiv) {
     let btns = '';
     for (let i = 1; i <= 6; i++) {
-      const precio = producto['Precio' + i];
+      const precio = parseFloat(producto['Precio' + i]);
       if (precio && precio > 0) {
         btns += `<button onclick="Utils.$('nuevo-precio').value='${precio}'">P${i}: ${Utils.formatMoney(precio)}</button>`;
       }
@@ -1262,8 +1262,11 @@ async function sincronizar() {
       UI.renderMetodosPago();
       if (Utils.$('modal-productos')?.classList.contains('active')) CRUDProductos.render();
       if (Utils.$('modal-clientes')?.classList.contains('active')) CRUDClientes.render();
+      // Actualizar vistas si están abiertas
+      if (Utils.$('vista-productos')?.classList.contains('active')) renderVistaProductos();
+      if (Utils.$('vista-clientes')?.classList.contains('active')) renderVistaClientes();
     }
-  } catch {}
+  } catch (e) {}
 }
 
 async function sincronizarManual() {
@@ -1273,52 +1276,6 @@ async function sincronizarManual() {
 }
 
 // ============================================
-// INICIALIZACIÓN
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  const sesion = localStorage.getItem('cafi_usuario');
-  if (sesion) {
-    try {
-      const usuario = JSON.parse(sesion);
-      if (usuario) {
-        State.usuario = usuario;
-        UI.mostrarLoading();
-        API.cargarDatos();
-      }
-    } catch {
-      localStorage.removeItem('cafi_usuario');
-    }
-  }
-  
-  // Login form
-  Utils.$('login-form')?.addEventListener('submit', Auth.login);
-  
-  // Barcode
-  Utils.$('barcode')?.addEventListener('keypress', e => {
-    if (e.key === 'Enter') {
-      Cart.buscarPorCodigo(e.target.value);
-      e.target.value = '';
-    }
-  });
-  
-  // Atajos de teclado
-  document.addEventListener('keydown', e => {
-    if (Utils.$('app').style.display !== 'grid') return;
-    
-    const shortcuts = {
-      'F2': () => Modal.abrir('modal-busqueda'),
-      'F4': () => { if (State.carrito.length) Venta.cancelar(); },
-      'F8': () => Venta.ponerEnEspera(),
-      'F12': () => Cobro.abrirModal(),
-      'Escape': () => Modal.cerrarTodos()
-    };
-    
-    if (shortcuts[e.key]) {
-      e.preventDefault();
-      shortcuts[e.key]();
-    }
-  });
-  // ============================================
 // DROPDOWN Y VISTAS
 // ============================================
 
@@ -1326,32 +1283,20 @@ function toggleDropdown(id) {
   const dropdown = document.getElementById(id).parentElement;
   const wasActive = dropdown.classList.contains('active');
   
-  // Cerrar todos los dropdowns
   document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
   
-  // Si no estaba activo, abrirlo
   if (!wasActive) {
     dropdown.classList.add('active');
   }
 }
 
-// Cerrar dropdown al hacer click afuera
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.dropdown')) {
-    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
-  }
-});
-
 function abrirVista(vista) {
-  // Cerrar dropdown
   document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
   
-  // Mostrar vista
   const vistaEl = Utils.$('vista-' + vista);
   if (vistaEl) {
     vistaEl.classList.add('active');
     
-    // Renderizar contenido
     switch(vista) {
       case 'productos':
         renderVistaProductos();
@@ -1384,7 +1329,6 @@ function renderVistaProductos(lista = State.productos) {
   const tbody = Utils.$('vista-productos-tbody');
   if (!tbody) return;
   
-  // Stats
   Utils.$('stat-productos-total').textContent = State.productos.length;
   Utils.$('stat-productos-activos').textContent = State.productos.filter(p => p.Activo == 1).length;
   
@@ -1450,7 +1394,6 @@ function renderVistaClientes(lista = State.clientes) {
   const tbody = Utils.$('vista-clientes-tbody');
   if (!tbody) return;
   
-  // Stats
   Utils.$('stat-clientes-total').textContent = State.clientes.length;
   Utils.$('stat-clientes-credito').textContent = State.clientes.filter(c => c.Credito).length;
   
@@ -1515,7 +1458,6 @@ function renderVistaProveedores(lista = State.proveedores) {
   const tbody = Utils.$('vista-proveedores-tbody');
   if (!tbody) return;
   
-  // Stats
   Utils.$('stat-proveedores-total').textContent = State.proveedores.length;
   
   if (!lista.length) {
@@ -1575,7 +1517,6 @@ function renderVistaMetodos(lista = State.metodosPago) {
   const tbody = Utils.$('vista-metodos-tbody');
   if (!tbody) return;
   
-  // Stats
   Utils.$('stat-metodos-total').textContent = State.metodosPago.length;
   
   if (!lista.length) {
@@ -1635,5 +1576,57 @@ function eliminarMetodoVista(id) {
   Toast.info('Función de métodos de pago próximamente');
 }
 
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  const sesion = localStorage.getItem('cafi_usuario');
+  if (sesion) {
+    try {
+      const usuario = JSON.parse(sesion);
+      if (usuario) {
+        State.usuario = usuario;
+        UI.mostrarLoading();
+        API.cargarDatos();
+      }
+    } catch (e) {
+      localStorage.removeItem('cafi_usuario');
+    }
+  }
   
+  // Login form
+  Utils.$('login-form')?.addEventListener('submit', Auth.login);
+  
+  // Barcode
+  Utils.$('barcode')?.addEventListener('keypress', e => {
+    if (e.key === 'Enter') {
+      Cart.buscarPorCodigo(e.target.value);
+      e.target.value = '';
+    }
+  });
+  
+  // Atajos de teclado
+  document.addEventListener('keydown', e => {
+    if (Utils.$('app').style.display !== 'grid') return;
+    
+    const shortcuts = {
+      'F2': () => Modal.abrir('modal-busqueda'),
+      'F4': () => { if (State.carrito.length) Venta.cancelar(); },
+      'F8': () => Venta.ponerEnEspera(),
+      'F12': () => Cobro.abrirModal(),
+      'Escape': () => Modal.cerrarTodos()
+    };
+    
+    if (shortcuts[e.key]) {
+      e.preventDefault();
+      shortcuts[e.key]();
+    }
+  });
+});
 
+// Cerrar dropdown al hacer click afuera
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) {
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+  }
+});
