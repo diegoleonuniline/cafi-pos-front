@@ -267,6 +267,196 @@
   <!-- MODALES -->
   <!-- Se cargan desde modals.html -->
   <div id="modals-container"></div>
+
+<!-- ========== VISTAS CATÁLOGOS ========== -->
+
+<!-- VISTA: PRODUCTOS -->
+<div id="vista-productos" class="vista-catalogo">
+  <div class="vista-header">
+    <div class="vista-header-left">
+      <button class="btn-volver" onclick="cerrarVista('productos')">
+        <i class="fas fa-arrow-left"></i> Volver al POS
+      </button>
+      <h2><i class="fas fa-box"></i> Catálogo de Productos</h2>
+    </div>
+    <button class="btn btn-primary" onclick="mostrarFormProducto()">
+      <i class="fas fa-plus"></i> Nuevo Producto
+    </button>
+  </div>
+  <div class="vista-toolbar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="buscar-vista-productos" placeholder="Buscar por nombre, código..." oninput="filtrarVistaProductos(this.value)">
+    </div>
+    <div class="vista-stats">
+      <div class="vista-stat">
+        <span>Total Productos</span>
+        <strong id="stat-productos-total">0</strong>
+      </div>
+      <div class="vista-stat">
+        <span>Activos</span>
+        <strong id="stat-productos-activos">0</strong>
+      </div>
+    </div>
+  </div>
+  <div class="vista-content">
+    <div class="vista-table-container">
+      <table class="vista-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th>Nombre POS</th>
+            <th>Unidad</th>
+            <th>P1</th>
+            <th>P2</th>
+            <th>P3</th>
+            <th>P4</th>
+            <th>P5</th>
+            <th>P6</th>
+            <th>Estado</th>
+            <th class="col-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="vista-productos-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- VISTA: CLIENTES -->
+<div id="vista-clientes" class="vista-catalogo">
+  <div class="vista-header">
+    <div class="vista-header-left">
+      <button class="btn-volver" onclick="cerrarVista('clientes')">
+        <i class="fas fa-arrow-left"></i> Volver al POS
+      </button>
+      <h2><i class="fas fa-users"></i> Catálogo de Clientes</h2>
+    </div>
+    <button class="btn btn-primary" onclick="mostrarFormCliente()">
+      <i class="fas fa-plus"></i> Nuevo Cliente
+    </button>
+  </div>
+  <div class="vista-toolbar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="buscar-vista-clientes" placeholder="Buscar por nombre, teléfono..." oninput="filtrarVistaClientes(this.value)">
+    </div>
+    <div class="vista-stats">
+      <div class="vista-stat">
+        <span>Total Clientes</span>
+        <strong id="stat-clientes-total">0</strong>
+      </div>
+      <div class="vista-stat">
+        <span>Con Crédito</span>
+        <strong id="stat-clientes-credito">0</strong>
+      </div>
+    </div>
+  </div>
+  <div class="vista-content">
+    <div class="vista-table-container">
+      <table class="vista-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Teléfono</th>
+            <th>Tipo Precio</th>
+            <th>Crédito</th>
+            <th>Límite Crédito</th>
+            <th>Estado</th>
+            <th class="col-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="vista-clientes-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- VISTA: PROVEEDORES -->
+<div id="vista-proveedores" class="vista-catalogo">
+  <div class="vista-header">
+    <div class="vista-header-left">
+      <button class="btn-volver" onclick="cerrarVista('proveedores')">
+        <i class="fas fa-arrow-left"></i> Volver al POS
+      </button>
+      <h2><i class="fas fa-truck"></i> Catálogo de Proveedores</h2>
+    </div>
+    <button class="btn btn-primary" onclick="mostrarFormProveedor()">
+      <i class="fas fa-plus"></i> Nuevo Proveedor
+    </button>
+  </div>
+  <div class="vista-toolbar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="buscar-vista-proveedores" placeholder="Buscar proveedor..." oninput="filtrarVistaProveedores(this.value)">
+    </div>
+    <div class="vista-stats">
+      <div class="vista-stat">
+        <span>Total Proveedores</span>
+        <strong id="stat-proveedores-total">0</strong>
+      </div>
+    </div>
+  </div>
+  <div class="vista-content">
+    <div class="vista-table-container">
+      <table class="vista-table">
+        <thead>
+          <tr>
+            <th>Proveedor</th>
+            <th>Contacto</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th class="col-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="vista-proveedores-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- VISTA: MÉTODOS DE PAGO -->
+<div id="vista-metodos-pago" class="vista-catalogo">
+  <div class="vista-header">
+    <div class="vista-header-left">
+      <button class="btn-volver" onclick="cerrarVista('metodos-pago')">
+        <i class="fas fa-arrow-left"></i> Volver al POS
+      </button>
+      <h2><i class="fas fa-credit-card"></i> Métodos de Pago</h2>
+    </div>
+    <button class="btn btn-primary" onclick="mostrarFormMetodoPago()">
+      <i class="fas fa-plus"></i> Nuevo Método
+    </button>
+  </div>
+  <div class="vista-toolbar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="buscar-vista-metodos" placeholder="Buscar método..." oninput="filtrarVistaMetodos(this.value)">
+    </div>
+    <div class="vista-stats">
+      <div class="vista-stat">
+        <span>Total Métodos</span>
+        <strong id="stat-metodos-total">0</strong>
+      </div>
+    </div>
+  </div>
+  <div class="vista-content">
+    <div class="vista-table-container">
+      <table class="vista-table">
+        <thead>
+          <tr>
+            <th>Método de Pago</th>
+            <th>Estado</th>
+            <th class="col-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="vista-metodos-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
   
   <!-- TOAST -->
   <div id="toast" class="toast"></div>
