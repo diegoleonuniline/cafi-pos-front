@@ -1318,4 +1318,322 @@ document.addEventListener('DOMContentLoaded', () => {
       shortcuts[e.key]();
     }
   });
+  // ============================================
+// DROPDOWN Y VISTAS
+// ============================================
+
+function toggleDropdown(id) {
+  const dropdown = document.getElementById(id).parentElement;
+  const wasActive = dropdown.classList.contains('active');
+  
+  // Cerrar todos los dropdowns
+  document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+  
+  // Si no estaba activo, abrirlo
+  if (!wasActive) {
+    dropdown.classList.add('active');
+  }
+}
+
+// Cerrar dropdown al hacer click afuera
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) {
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+  }
+});
+
+function abrirVista(vista) {
+  // Cerrar dropdown
+  document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+  
+  // Mostrar vista
+  const vistaEl = Utils.$('vista-' + vista);
+  if (vistaEl) {
+    vistaEl.classList.add('active');
+    
+    // Renderizar contenido
+    switch(vista) {
+      case 'productos':
+        renderVistaProductos();
+        break;
+      case 'clientes':
+        renderVistaClientes();
+        break;
+      case 'proveedores':
+        renderVistaProveedores();
+        break;
+      case 'metodos-pago':
+        renderVistaMetodos();
+        break;
+    }
+  }
+}
+
+function cerrarVista(vista) {
+  const vistaEl = Utils.$('vista-' + vista);
+  if (vistaEl) {
+    vistaEl.classList.remove('active');
+  }
+}
+
+// ============================================
+// VISTA PRODUCTOS
+// ============================================
+
+function renderVistaProductos(lista = State.productos) {
+  const tbody = Utils.$('vista-productos-tbody');
+  if (!tbody) return;
+  
+  // Stats
+  Utils.$('stat-productos-total').textContent = State.productos.length;
+  Utils.$('stat-productos-activos').textContent = State.productos.filter(p => p.Activo == 1).length;
+  
+  if (!lista.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="12">
+          <div class="empty-vista">
+            <i class="fas fa-box-open"></i>
+            <p>No hay productos registrados</p>
+            <small>Haz clic en "Nuevo Producto" para agregar uno</small>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = lista.map(p => `
+    <tr>
+      <td><code>${p.CodigoBarras || '---'}</code></td>
+      <td><strong>${p.NombreProducto}</strong></td>
+      <td>${p.PuntoVentaNombre || '-'}</td>
+      <td><span class="unit-badge">${p.UnidadVenta || 'PZ'}</span></td>
+      <td>${Utils.formatMoney(p.Precio1)}</td>
+      <td>${Utils.formatMoney(p.Precio2)}</td>
+      <td>${Utils.formatMoney(p.Precio3)}</td>
+      <td>${Utils.formatMoney(p.Precio4)}</td>
+      <td>${Utils.formatMoney(p.Precio5)}</td>
+      <td>${Utils.formatMoney(p.Precio6)}</td>
+      <td>${p.Activo == 1 ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>'}</td>
+      <td class="col-actions">
+        <button class="btn-icon" onclick="editarProductoVista('${p.ProductoID}')" title="Editar"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon danger" onclick="eliminarProductoVista('${p.ProductoID}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filtrarVistaProductos(texto) {
+  const filtrado = State.productos.filter(p => 
+    (p.NombreProducto || '').toLowerCase().includes(texto.toLowerCase()) ||
+    (p.PuntoVentaNombre || '').toLowerCase().includes(texto.toLowerCase()) ||
+    String(p.CodigoBarras || '').includes(texto)
+  );
+  renderVistaProductos(filtrado);
+}
+
+function editarProductoVista(id) {
+  CRUDProductos.editar(id);
+}
+
+async function eliminarProductoVista(id) {
+  await CRUDProductos.eliminar(id);
+  renderVistaProductos();
+}
+
+// ============================================
+// VISTA CLIENTES
+// ============================================
+
+function renderVistaClientes(lista = State.clientes) {
+  const tbody = Utils.$('vista-clientes-tbody');
+  if (!tbody) return;
+  
+  // Stats
+  Utils.$('stat-clientes-total').textContent = State.clientes.length;
+  Utils.$('stat-clientes-credito').textContent = State.clientes.filter(c => c.Credito).length;
+  
+  if (!lista.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7">
+          <div class="empty-vista">
+            <i class="fas fa-users"></i>
+            <p>No hay clientes registrados</p>
+            <small>Haz clic en "Nuevo Cliente" para agregar uno</small>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = lista.map(c => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="avatar">${Utils.getIniciales(c.Nombre)}</div>
+          <strong>${c.Nombre}</strong>
+        </div>
+      </td>
+      <td>${c.Telefono || '-'}</td>
+      <td><span class="badge">P${c.TipoPrecio || 1}</span></td>
+      <td>${c.Credito ? '<span class="badge-credito">Sí</span>' : '<span class="badge">No</span>'}</td>
+      <td>${c.Credito ? Utils.formatMoney(c.LimiteCredito) : '-'}</td>
+      <td>${c.Activo == 1 ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>'}</td>
+      <td class="col-actions">
+        <button class="btn-icon" onclick="editarClienteVista('${c.ClienteID}')" title="Editar"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon danger" onclick="eliminarClienteVista('${c.ClienteID}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filtrarVistaClientes(texto) {
+  const filtrado = State.clientes.filter(c => 
+    (c.Nombre || '').toLowerCase().includes(texto.toLowerCase()) ||
+    (c.Telefono || '').includes(texto)
+  );
+  renderVistaClientes(filtrado);
+}
+
+function editarClienteVista(id) {
+  CRUDClientes.editar(id);
+}
+
+async function eliminarClienteVista(id) {
+  await CRUDClientes.eliminar(id);
+  renderVistaClientes();
+}
+
+// ============================================
+// VISTA PROVEEDORES
+// ============================================
+
+function renderVistaProveedores(lista = State.proveedores) {
+  const tbody = Utils.$('vista-proveedores-tbody');
+  if (!tbody) return;
+  
+  // Stats
+  Utils.$('stat-proveedores-total').textContent = State.proveedores.length;
+  
+  if (!lista.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6">
+          <div class="empty-vista">
+            <i class="fas fa-truck"></i>
+            <p>No hay proveedores registrados</p>
+            <small>Haz clic en "Nuevo Proveedor" para agregar uno</small>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = lista.map(p => `
+    <tr>
+      <td><strong>${p.NombreProveedor || p.Nombre || '-'}</strong></td>
+      <td>${p.Contacto || '-'}</td>
+      <td>${p.Telefono || '-'}</td>
+      <td>${p.Email || '-'}</td>
+      <td>${p.Activo == 1 ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>'}</td>
+      <td class="col-actions">
+        <button class="btn-icon" onclick="editarProveedorVista('${p.ProveedorID}')" title="Editar"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon danger" onclick="eliminarProveedorVista('${p.ProveedorID}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filtrarVistaProveedores(texto) {
+  const filtrado = State.proveedores.filter(p => 
+    (p.NombreProveedor || p.Nombre || '').toLowerCase().includes(texto.toLowerCase())
+  );
+  renderVistaProveedores(filtrado);
+}
+
+function mostrarFormProveedor() {
+  Toast.info('Función de proveedores próximamente');
+}
+
+function editarProveedorVista(id) {
+  Toast.info('Función de proveedores próximamente');
+}
+
+function eliminarProveedorVista(id) {
+  Toast.info('Función de proveedores próximamente');
+}
+
+// ============================================
+// VISTA MÉTODOS DE PAGO
+// ============================================
+
+function renderVistaMetodos(lista = State.metodosPago) {
+  const tbody = Utils.$('vista-metodos-tbody');
+  if (!tbody) return;
+  
+  // Stats
+  Utils.$('stat-metodos-total').textContent = State.metodosPago.length;
+  
+  if (!lista.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="3">
+          <div class="empty-vista">
+            <i class="fas fa-credit-card"></i>
+            <p>No hay métodos de pago registrados</p>
+            <small>Haz clic en "Nuevo Método" para agregar uno</small>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  const iconos = {
+    'Efectivo': 'fa-money-bill-wave',
+    'Tarjeta': 'fa-credit-card',
+    'Transferencia': 'fa-mobile-alt'
+  };
+  
+  tbody.innerHTML = lista.map(m => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <i class="fas ${iconos[m.Nombre] || 'fa-wallet'}" style="color:var(--primary);font-size:18px;"></i>
+          <strong>${m.Nombre}</strong>
+        </div>
+      </td>
+      <td>${m.Activo == 1 ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>'}</td>
+      <td class="col-actions">
+        <button class="btn-icon" onclick="editarMetodoVista('${m.MetodoPagoID}')" title="Editar"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon danger" onclick="eliminarMetodoVista('${m.MetodoPagoID}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filtrarVistaMetodos(texto) {
+  const filtrado = State.metodosPago.filter(m => 
+    (m.Nombre || '').toLowerCase().includes(texto.toLowerCase())
+  );
+  renderVistaMetodos(filtrado);
+}
+
+function mostrarFormMetodoPago() {
+  Toast.info('Función de métodos de pago próximamente');
+}
+
+function editarMetodoVista(id) {
+  Toast.info('Función de métodos de pago próximamente');
+}
+
+function eliminarMetodoVista(id) {
+  Toast.info('Función de métodos de pago próximamente');
+}
+
+  
 });
