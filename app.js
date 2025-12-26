@@ -26,7 +26,7 @@ const State = {
 // Utilidades
 const Utils = {
   $(id) { return document.getElementById(id); },
-  formatMoney(n) { return '$' + (n || 0).toFixed(2); },
+formatMoney(n) { return '$' + (parseFloat(n) || 0).toFixed(2); },
   getIniciales(n) {
     if (!n) return 'US';
     return n.split(' ').slice(0, 2).map(p => p[0] || '').join('').toUpperCase();
