@@ -84,23 +84,31 @@
           <span>CAFI</span>
         </div>
       </div>
-      <div class="header-center">
-        <button class="hbtn" onclick="nuevaVenta()" title="Nueva venta (Ctrl+N)">
-          <i class="fas fa-plus"></i><span>Nueva</span>
-        </button>
-        <button class="hbtn warning" onclick="abrirVentasEnEspera()" title="Ventas en espera (F8)">
-          <i class="fas fa-clock"></i><span>Espera</span><b id="espera-badge"></b>
-        </button>
-        <button class="hbtn" onclick="abrirModal('modal-productos')" title="Administrar productos">
-          <i class="fas fa-box"></i><span>Productos</span>
-        </button>
-        <button class="hbtn" onclick="abrirModal('modal-clientes')" title="Administrar clientes">
-          <i class="fas fa-users"></i><span>Clientes</span>
-        </button>
-        <button class="hbtn icon-only" onclick="sincronizarManual()" title="Sincronizar datos">
-          <i class="fas fa-sync-alt"></i>
-        </button>
-      </div>
+ <div class="header-center">
+  <button class="hbtn" onclick="nuevaVenta()" title="Nueva venta (Ctrl+N)">
+    <i class="fas fa-plus"></i><span>Nueva</span>
+  </button>
+  <button class="hbtn warning" onclick="abrirVentasEnEspera()" title="Ventas en espera (F8)">
+    <i class="fas fa-clock"></i><span>Espera</span><b id="espera-badge"></b>
+  </button>
+  
+  <!-- DROPDOWN CATÁLOGOS -->
+  <div class="dropdown">
+    <button class="hbtn" onclick="toggleDropdown('dropdown-catalogos')">
+      <i class="fas fa-th-list"></i><span>Catálogos</span><i class="fas fa-chevron-down dropdown-arrow"></i>
+    </button>
+    <div class="dropdown-menu" id="dropdown-catalogos">
+      <a onclick="abrirVista('productos')"><i class="fas fa-box"></i> Productos</a>
+      <a onclick="abrirVista('clientes')"><i class="fas fa-users"></i> Clientes</a>
+      <a onclick="abrirVista('proveedores')"><i class="fas fa-truck"></i> Proveedores</a>
+      <a onclick="abrirVista('metodos-pago')"><i class="fas fa-credit-card"></i> Métodos de Pago</a>
+    </div>
+  </div>
+  
+  <button class="hbtn icon-only" onclick="sincronizarManual()" title="Sincronizar datos">
+    <i class="fas fa-sync-alt"></i>
+  </button>
+</div>
       <div class="header-right">
         <div class="user-pill" onclick="mostrarInfoUsuario()">
           <div class="avatar" id="user-avatar">US</div>
