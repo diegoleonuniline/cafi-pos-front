@@ -2463,3 +2463,84 @@ function resetCorteForm() {
   Utils.$('total-otros-metodos').textContent = '$0.00';
   Utils.$('corte-observaciones').value = '';
 }
+// ============================================
+// PROCESAR CORTE DE CAJA
+// ============================================
+async function procesarCorte() {
+  const btn = Utils.$('btn-calcular-corte');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+  
+  try {
+    // Obtener efectivo contado
+    const efectivoContado = parseFloat(Utils.$('total-efectivo-contado')?.textContent.replace(/[^0-9.-]/g, '')) || 0;
+    
+    // Obtener resumen del backend
+    const resumen = await API.calcularResumenTurno({
+      turnoID: State.turno.id,
+      empresaID: State.usuario.empresaID,
+      sucursalID: State.usuario.sucursalID,
+      usuarioEmail: State.usuario.email
+    });
+    
+    if (!resumen.success) {
+      Toast.error(resumen.error || 'Error al calcular resumen');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-calculator"></i> Cerrar Turno';
+      return;
+    }
+    
+    const r = resumen.resumen;
+    
+    // Actualizar resumen en pantalla
+    Utils.$('resumen-saldo-inicial').textContent = Utils.formatMoney(r.saldoInicial);
+    Utils.$('resumen-ventas').textContent = Utils.formatMoney(r.ventasTotales);
+    Utils.$('resumen-ingresos').textContent = Utils.formatMoney(r.ingresos);
+    Utils.$('resumen-egresos').textContent = Utils.formatMoney(r.egresos);
+    Utils.$('resumen-efectivo-esperado').textContent = Utils.formatMoney(r.efectivoEsperado);
+    Utils.$('resumen-efectivo-contado').textContent = Utils.formatMoney(efectivoContado);
+    
+    const diferencia = efectivoContado - r.efectivoEsperado;
+    const difEl = Utils.$('resumen-diferencia');
+    difEl.textContent = Utils.formatMoney(diferencia);
+    difEl.className = diferencia > 0 ? 'positivo' : diferencia < 0 ? 'negativo' : 'cero';
+    
+    // Confirmar cierre
+    const confirmado = await Confirm.show(
+      '¿Cerrar turno?',
+      `Efectivo esperado: ${Utils.formatMoney(r.efectivoEsperado)}\nEfectivo contado: ${Utils.formatMoney(efectivoContado)}\nDiferencia: ${Utils.formatMoney(diferencia)}`
+    );
+    
+    if (!confirmado) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-calculator"></i> Cerrar Turno';
+      return;
+    }
+    
+    // Cerrar turno
+    const resultado = await API.cerrarTurno({
+      turnoID: State.turno.id,
+      empresaID: State.usuario.empresaID,
+      sucursalID: State.usuario.sucursalID,
+      usuarioEmail: State.usuario.email,
+      efectivoReal: efectivoContado,
+      observaciones: Utils.$('corte-observaciones')?.value || ''
+    });
+    
+    if (resultado.success) {
+      Modal.cerrar('modal-cerrar-turno');
+      State.turno = null;
+      Turno.actualizarUI();
+      Toast.success('Turno cerrado correctamente');
+      resetCorteForm();
+    } else {
+      Toast.error(resultado.error || 'Error al cerrar turno');
+    }
+  } catch (e) {
+    console.error('Error en corte:', e);
+    Toast.error('Error de conexión');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-calculator"></i> Cerrar Turno';
+  }
+}
