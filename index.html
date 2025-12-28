@@ -459,120 +459,238 @@
   </div>
   
   <!-- MODAL: FORM PRODUCTO -->
-  <div id="modal-form-producto" class="modal-overlay">
-    <div class="modal modal-form-large">
-      <div class="modal-header gradient">
-        <h3 id="form-producto-titulo"><i class="fas fa-box"></i> Nuevo Producto</h3>
-        <button class="btn-close light" onclick="cerrarModal('modal-form-producto')"><i class="fas fa-times"></i></button>
-      </div>
-      <form id="form-producto" onsubmit="event.preventDefault(); guardarProducto();">
-        <input type="hidden" id="prod-id">
-        <div class="modal-body-scroll">
-          <!-- Info General -->
-          <div class="form-section-title"><i class="fas fa-info-circle"></i> Información General</div>
-          <div class="form-grid-2">
-            <div class="form-field span-2">
-              <label>Nombre del Producto *</label>
-              <input type="text" id="prod-nombre" placeholder="Ej: Coca Cola 600ml" required>
-            </div>
-            <div class="form-field">
-              <label>Nombre en POS</label>
-              <input type="text" id="prod-pv-nombre" placeholder="Nombre corto para mostrar">
-            </div>
-            <div class="form-field">
-              <label>Código de Barras</label>
-              <input type="text" id="prod-codigo" placeholder="Escanea o escribe">
-            </div>
-            <div class="form-field">
-              <label>Unidad de Venta</label>
-              <select id="prod-unidad">
-                <option value="PZ">Pieza (PZ)</option>
-                <option value="KG">Kilogramo (KG)</option>
-                <option value="LT">Litro (LT)</option>
-                <option value="MT">Metro (MT)</option>
-                <option value="CJ">Caja (CJ)</option>
-                <option value="PQ">Paquete (PQ)</option>
-              </select>
-            </div>
-          </div>
-          
-          <!-- Precios -->
-          <div class="form-section-title"><i class="fas fa-dollar-sign"></i> Precios de Venta</div>
-          <div class="form-grid-3">
-            <div class="form-field">
-              <label>Precio 1 (Principal)</label>
-              <div class="input-with-prefix">
-                <span>$</span>
-                <input type="number" id="prod-precio1" step="0.01" placeholder="0.00">
-              </div>
-            </div>
-            <div class="form-field">
-              <label>Precio 2 (Mayoreo)</label>
-              <div class="input-with-prefix">
-                <span>$</span>
-                <input type="number" id="prod-precio2" step="0.01" placeholder="0.00">
-              </div>
-            </div>
-            <div class="form-field">
-              <label>Precio 3 (Especial)</label>
-              <div class="input-with-prefix">
-                <span>$</span>
-                <input type="number" id="prod-precio3" step="0.01" placeholder="0.00">
-              </div>
-            </div>
-            <div class="form-field">
-              <label>Precio 4</label>
-              <div class="input-with-prefix">
-                <span>$</span>
-                <input type="number" id="prod-precio4" step="0.01" placeholder="0.00">
-              </div>
-            </div>
-            <div class="form-field">
-              <label>Precio 5</label>
-              <div class="input-with-prefix">
-                <span>$</span>
-                <input type="number" id="prod-precio5" step="0.01" placeholder="0.00">
-              </div>
-            </div>
-            <div class="form-field">
-              <label>Precio 6</label>
-              <div class="input-with-prefix">
-                <span>$</span>
-                <input type="number" id="prod-precio6" step="0.01" placeholder="0.00">
-              </div>
-            </div>
-          </div>
-          
-          <!-- Descuentos -->
-          <div class="form-section-title"><i class="fas fa-percentage"></i> Descuentos</div>
-          <div class="form-grid-2">
-            <div class="form-field">
-              <label class="checkbox-inline">
-                <input type="checkbox" id="prod-permite-descuento">
-                <span>Permite aplicar descuento</span>
-              </label>
-            </div>
-            <div class="form-field">
-              <label>Descuento Máximo (%)</label>
-              <div class="input-with-suffix">
-                <input type="number" id="prod-descuento-max" step="1" min="0" max="100" placeholder="0">
-                <span>%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline" onclick="cerrarModal('modal-form-producto')">
-            <i class="fas fa-times"></i> Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary" id="btn-guardar-producto">
-            <i class="fas fa-save"></i> Guardar Producto
-          </button>
-        </div>
-      </form>
+<div id="modal-form-producto" class="modal-overlay">
+  <div class="modal modal-form-large">
+    <div class="modal-header gradient">
+      <h3 id="form-producto-titulo"><i class="fas fa-box"></i> Nuevo Producto</h3>
+      <button class="btn-close light" onclick="cerrarModal('modal-form-producto')"><i class="fas fa-times"></i></button>
     </div>
+    <form id="form-producto" onsubmit="event.preventDefault(); guardarProducto();">
+      <input type="hidden" id="prod-id">
+      <div class="modal-body-scroll">
+        
+        <!-- Info General -->
+        <div class="form-section-title"><i class="fas fa-info-circle"></i> Información General</div>
+        <div class="form-grid-2">
+          <div class="form-field span-2">
+            <label>Nombre del Producto *</label>
+            <input type="text" id="prod-nombre" placeholder="Ej: Coca Cola 600ml" required>
+          </div>
+          <div class="form-field">
+            <label>Nombre en POS</label>
+            <input type="text" id="prod-pv-nombre" placeholder="Nombre corto para mostrar">
+          </div>
+          <div class="form-field">
+            <label>Código de Barras</label>
+            <input type="text" id="prod-codigo" placeholder="Escanea o escribe">
+          </div>
+          <div class="form-field">
+            <label>Categoría</label>
+            <input type="text" id="prod-categoria" placeholder="Ej: Bebidas, Lácteos...">
+          </div>
+          <div class="form-field">
+            <label>Marca</label>
+            <input type="text" id="prod-marca" placeholder="Ej: Coca Cola, Bimbo...">
+          </div>
+          <div class="form-field">
+            <label>Proveedor</label>
+            <select id="prod-proveedor">
+              <option value="">-- Sin proveedor --</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>URL de Imagen</label>
+            <input type="url" id="prod-imagen" placeholder="https://...">
+          </div>
+        </div>
+        
+        <!-- Unidades -->
+        <div class="form-section-title"><i class="fas fa-boxes"></i> Unidades de Medida</div>
+        <div class="form-grid-3">
+          <div class="form-field">
+            <label>Unidad de Compra</label>
+            <select id="prod-unidad-compra">
+              <option value="PZ">Pieza (PZ)</option>
+              <option value="CJ">Caja (CJ)</option>
+              <option value="PQ">Paquete (PQ)</option>
+              <option value="BT">Bulto (BT)</option>
+              <option value="KG">Kilogramo (KG)</option>
+              <option value="LT">Litro (LT)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Contenido por Unidad</label>
+            <input type="number" id="prod-contenido" step="1" min="1" placeholder="Ej: 24 piezas por caja">
+          </div>
+          <div class="form-field">
+            <label>Unidad de Venta</label>
+            <select id="prod-unidad">
+              <option value="PZ">Pieza (PZ)</option>
+              <option value="KG">Kilogramo (KG)</option>
+              <option value="LT">Litro (LT)</option>
+              <option value="MT">Metro (MT)</option>
+              <option value="CJ">Caja (CJ)</option>
+              <option value="PQ">Paquete (PQ)</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Venta por Peso -->
+        <div class="form-section-title"><i class="fas fa-balance-scale"></i> Venta por Peso/Granel</div>
+        <div class="form-grid-3">
+          <div class="form-field">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="prod-venta-peso" onchange="toggleVentaPeso()">
+              <span>Venta por peso</span>
+            </label>
+          </div>
+          <div class="form-field" id="grupo-unidad-base" style="display:none">
+            <label>Unidad Base</label>
+            <select id="prod-unidad-base">
+              <option value="KG">Kilogramo (KG)</option>
+              <option value="GR">Gramo (GR)</option>
+              <option value="LT">Litro (LT)</option>
+              <option value="ML">Mililitro (ML)</option>
+              <option value="MT">Metro (MT)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="prod-permite-decimales">
+              <span>Permite decimales</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Precios -->
+        <div class="form-section-title"><i class="fas fa-dollar-sign"></i> Precios de Venta</div>
+        <div class="form-grid-3">
+          <div class="form-field">
+            <label>Precio 1 (Principal)</label>
+            <div class="input-with-prefix">
+              <span>$</span>
+              <input type="number" id="prod-precio1" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Precio 2 (Mayoreo)</label>
+            <div class="input-with-prefix">
+              <span>$</span>
+              <input type="number" id="prod-precio2" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Precio 3 (Especial)</label>
+            <div class="input-with-prefix">
+              <span>$</span>
+              <input type="number" id="prod-precio3" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Precio 4</label>
+            <div class="input-with-prefix">
+              <span>$</span>
+              <input type="number" id="prod-precio4" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Precio 5</label>
+            <div class="input-with-prefix">
+              <span>$</span>
+              <input type="number" id="prod-precio5" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Precio 6</label>
+            <div class="input-with-prefix">
+              <span>$</span>
+              <input type="number" id="prod-precio6" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Descuentos -->
+        <div class="form-section-title"><i class="fas fa-percentage"></i> Descuentos</div>
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="prod-permite-descuento">
+              <span>Permite aplicar descuento</span>
+            </label>
+          </div>
+          <div class="form-field">
+            <label>Descuento Máximo (%)</label>
+            <div class="input-with-suffix">
+              <input type="number" id="prod-descuento-max" step="1" min="0" max="100" placeholder="0">
+              <span>%</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Ofertas y Destacados -->
+        <div class="form-section-title"><i class="fas fa-star"></i> Ofertas y Destacados</div>
+        <div class="form-grid-3">
+          <div class="form-field">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="prod-destacado">
+              <span>Producto destacado</span>
+            </label>
+          </div>
+          <div class="form-field">
+            <label>Orden Destacado</label>
+            <input type="number" id="prod-orden-destacado" step="1" min="0" placeholder="0">
+          </div>
+          <div class="form-field">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="prod-en-oferta" onchange="toggleOferta()">
+              <span>En oferta</span>
+            </label>
+          </div>
+          <div class="form-field" id="grupo-precio-oferta" style="display:none">
+            <label>Precio de Oferta</label>
+            <div class="input-with-prefix">
+              <span>$</span>
+              <input type="number" id="prod-precio-oferta" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Puntos -->
+        <div class="form-section-title"><i class="fas fa-coins"></i> Sistema de Puntos</div>
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label>Puntos que Otorga</label>
+            <input type="number" id="prod-puntos" step="1" min="0" placeholder="0">
+          </div>
+          <div class="form-field">
+            <label>Valor en Puntos (canje)</label>
+            <input type="number" id="prod-valor-puntos" step="1" min="0" placeholder="0">
+          </div>
+        </div>
+        
+        <!-- Estado -->
+        <div class="form-section-title"><i class="fas fa-toggle-on"></i> Estado</div>
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="prod-activo" checked>
+              <span>Producto activo</span>
+            </label>
+          </div>
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="cerrarModal('modal-form-producto')">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" id="btn-guardar-producto">
+          <i class="fas fa-save"></i> Guardar Producto
+        </button>
+      </div>
+    </form>
   </div>
-  
+</div>  
   <!-- MODAL: CRUD CLIENTES -->
   <div id="modal-clientes" class="modal-overlay">
     <div class="modal modal-lg">
