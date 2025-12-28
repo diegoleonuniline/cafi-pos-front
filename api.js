@@ -3,27 +3,22 @@
 // ============================================
 
 const API = {
-  // Método base para hacer requests
-  async request(endpoint, options = {}) {
+  async request(endpoint, method = 'GET', data = null) {
     const url = CONFIG.API_URL + endpoint;
     
-    const defaultOptions = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const options = {
+      method,
+      headers: { 'Content-Type': 'application/json' }
     };
     
-    const finalOptions = { ...defaultOptions, ...options };
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
     
     try {
-      const response = await fetch(url, finalOptions);
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Error en la solicitud');
-      }
-      
-      return data;
+      const response = await fetch(url, options);
+      const result = await response.json();
+      return result;
     } catch (error) {
       console.error('API Error:', error);
       throw error;
@@ -32,10 +27,7 @@ const API = {
 
   // ========== AUTH ==========
   async login(email, password) {
-    return this.request('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password })
-    });
+    return this.request('/api/auth/login', 'POST', { email, password });
   },
 
   // ========== CARGA INICIAL ==========
@@ -49,23 +41,15 @@ const API = {
   },
 
   async crearProducto(data) {
-    return this.request('/api/productos', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return this.request('/api/productos', 'POST', data);
   },
 
   async editarProducto(id, data) {
-    return this.request(`/api/productos/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
+    return this.request(`/api/productos/${id}`, 'PUT', data);
   },
 
   async eliminarProducto(id) {
-    return this.request(`/api/productos/${id}`, {
-      method: 'DELETE'
-    });
+    return this.request(`/api/productos/${id}`, 'DELETE');
   },
 
   // ========== CLIENTES ==========
@@ -74,31 +58,20 @@ const API = {
   },
 
   async crearCliente(data) {
-    return this.request('/api/clientes', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return this.request('/api/clientes', 'POST', data);
   },
 
   async editarCliente(id, data) {
-    return this.request(`/api/clientes/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
+    return this.request(`/api/clientes/${id}`, 'PUT', data);
   },
 
   async eliminarCliente(id) {
-    return this.request(`/api/clientes/${id}`, {
-      method: 'DELETE'
-    });
+    return this.request(`/api/clientes/${id}`, 'DELETE');
   },
 
   // ========== VENTAS ==========
   async crearVenta(data) {
-    return this.request('/api/ventas', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return this.request('/api/ventas', 'POST', data);
   },
 
   async getVentasHoy(empresaID, sucursalID) {
@@ -114,30 +87,31 @@ const API = {
   },
 
   async actualizarEstatusVenta(ventaID, estatus) {
-    return this.request(`/api/ventas/${ventaID}/estatus`, {
-      method: 'PUT',
-      body: JSON.stringify({ estatus })
-    });
+    return this.request(`/api/ventas/estatus/${ventaID}`, 'PUT', { estatus });
   },
 
-  async actualizarVentaEnEspera(data) {
-    return this.request(`/api/ventas/${data.ventaID}/espera`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
+  async actualizarVentaEnEspera(ventaID, data) {
+    return this.request(`/api/ventas/espera/${ventaID}`, 'PUT', data);
+  },
+
+  async reabrirVenta(ventaID) {
+    return this.request(`/api/ventas/reabrir/${ventaID}`, 'PUT');
+  },
+
+  async cancelarVenta(ventaID) {
+    return this.request(`/api/ventas/cancelar/${ventaID}`, 'PUT');
   },
 
   async agregarAbono(data) {
-    return this.request('/api/ventas/abono', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return this.request('/api/ventas/abono', 'POST', data);
   },
 
   async cancelarDetalleVenta(detalleID) {
-    return this.request(`/api/ventas/detalle/${detalleID}/cancelar`, {
-      method: 'PUT'
-    });
+    return this.request(`/api/ventas/detalle/cancelar/${detalleID}`, 'PUT');
+  },
+
+  async getSiguienteTicket(empresaID, sucursalID) {
+    return this.request(`/api/ventas/ticket/${empresaID}/${sucursalID}`);
   },
 
   // ========== TURNOS ==========
@@ -146,31 +120,19 @@ const API = {
   },
 
   async abrirTurno(data) {
-    return this.request('/api/turnos/abrir', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return this.request('/api/turnos/abrir', 'POST', data);
   },
 
   async cerrarTurno(data) {
-    return this.request('/api/turnos/cerrar', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return this.request('/api/turnos/cerrar', 'POST', data);
   },
 
   async registrarMovimiento(data) {
-    return this.request('/api/turnos/movimiento', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return this.request('/api/turnos/movimiento', 'POST', data);
   },
 
-  async calcularResumenTurno(turnoID, empresaID, sucursalID, usuarioEmail) {
-    return this.request('/api/turnos/resumen', {
-      method: 'POST',
-      body: JSON.stringify({ turnoID, empresaID, sucursalID, usuarioEmail })
-    });
+  async calcularResumenTurno(data) {
+    return this.request('/api/turnos/resumen', 'POST', data);
   },
 
   // ========== CATÁLOGOS ==========
@@ -182,20 +144,11 @@ const API = {
     return this.request(`/api/catalogos/metodos-pago/${empresaID}`);
   },
 
-  // ========== TICKETS ==========
-  async getSiguienteTicket(empresaID, sucursalID) {
-    try {
-      const res = await this.getVentasHoy(empresaID, sucursalID);
-      return (res.ventas?.length || 0) + 1;
-    } catch {
-      return 1;
-    }
+  async getMarcas(empresaID) {
+    return this.request(`/api/catalogos/marcas/${empresaID}`);
+  },
+
+  async getCategorias(empresaID) {
+    return this.request(`/api/catalogos/categorias/${empresaID}`);
   }
 };
-async calcularResumenTurno(data) {
-  return this.request('/turnos/resumen', 'POST', data);
-},
-
-async cerrarTurno(data) {
-  return this.request('/turnos/cerrar', 'POST', data);
-},
