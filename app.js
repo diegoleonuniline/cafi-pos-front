@@ -2349,3 +2349,117 @@ function cerrarMenuMovimientosHandler(e) {
     cerrarMenuMovimientos();
   }
 }
+// ============================================
+// CORTE DE CAJA - TABS
+// ============================================
+let corteTabActual = 0;
+
+function cambiarTabCorte(index) {
+  corteTabActual = index;
+  
+  // Actualizar tabs
+  document.querySelectorAll('.corte-tab').forEach((tab, i) => {
+    tab.classList.toggle('active', i === index);
+  });
+  
+  // Actualizar contenido
+  document.querySelectorAll('.corte-tab-content').forEach((content, i) => {
+    content.classList.toggle('active', i === index);
+  });
+  
+  // Actualizar botones
+  Utils.$('btn-tab-anterior').style.display = index > 0 ? 'inline-flex' : 'none';
+  Utils.$('btn-tab-siguiente').style.display = index < 2 ? 'inline-flex' : 'none';
+  Utils.$('btn-calcular-corte').style.display = index === 2 ? 'inline-flex' : 'none';
+  
+  // Si es el tab de resumen, actualizar valores
+  if (index === 2) {
+    actualizarResumenCorte();
+  }
+}
+
+function tabSiguienteCorte() {
+  if (corteTabActual < 2) {
+    cambiarTabCorte(corteTabActual + 1);
+  }
+}
+
+function tabAnteriorCorte() {
+  if (corteTabActual > 0) {
+    cambiarTabCorte(corteTabActual - 1);
+  }
+}
+
+function calcularConteoEfectivo() {
+  const denominaciones = [
+    { id: '1000', valor: 1000 },
+    { id: '500', valor: 500 },
+    { id: '200', valor: 200 },
+    { id: '100', valor: 100 },
+    { id: '50', valor: 50 },
+    { id: '20', valor: 20 },
+    { id: 'm20', valor: 20 },
+    { id: '10', valor: 10 },
+    { id: '5', valor: 5 },
+    { id: '2', valor: 2 },
+    { id: '1', valor: 1 },
+    { id: '050', valor: 0.5 }
+  ];
+  
+  let total = 0;
+  
+  denominaciones.forEach(d => {
+    const cantidad = parseInt(Utils.$('conteo-' + d.id)?.value) || 0;
+    const subtotal = cantidad * d.valor;
+    const subEl = Utils.$('sub-' + d.id);
+    if (subEl) subEl.textContent = Utils.formatMoney(subtotal);
+    total += subtotal;
+  });
+  
+  Utils.$('total-efectivo-contado').textContent = Utils.formatMoney(total);
+  calcularTotalCorte();
+}
+
+function calcularTotalCorte() {
+  const efectivo = parseFloat(Utils.$('total-efectivo-contado')?.textContent.replace(/[^0-9.-]/g, '')) || 0;
+  const tarjeta = parseFloat(Utils.$('corte-tarjeta')?.value) || 0;
+  const transferencia = parseFloat(Utils.$('corte-transferencia')?.value) || 0;
+  const otro = parseFloat(Utils.$('corte-otro')?.value) || 0;
+  
+  const totalOtros = tarjeta + transferencia + otro;
+  Utils.$('total-otros-metodos').textContent = Utils.formatMoney(totalOtros);
+  
+  const totalDeclarado = efectivo + totalOtros;
+  Utils.$('total-declarado').textContent = Utils.formatMoney(totalDeclarado);
+}
+
+function actualizarResumenCorte() {
+  const efectivoContado = parseFloat(Utils.$('total-efectivo-contado')?.textContent.replace(/[^0-9.-]/g, '')) || 0;
+  const saldoInicial = State.turno?.saldoInicial || 0;
+  
+  Utils.$('resumen-saldo-inicial').textContent = Utils.formatMoney(saldoInicial);
+  Utils.$('resumen-efectivo-contado').textContent = Utils.formatMoney(efectivoContado);
+  
+  // La diferencia se calcula después de obtener el resumen del backend
+  calcularTotalCorte();
+}
+
+function resetCorteForm() {
+  corteTabActual = 0;
+  cambiarTabCorte(0);
+  
+  // Reset conteo
+  ['1000','500','200','100','50','20','m20','10','5','2','1','050'].forEach(id => {
+    const el = Utils.$('conteo-' + id);
+    if (el) el.value = 0;
+    const sub = Utils.$('sub-' + id);
+    if (sub) sub.textContent = '$0';
+  });
+  
+  Utils.$('total-efectivo-contado').textContent = '$0.00';
+  Utils.$('corte-tarjeta').value = 0;
+  Utils.$('corte-transferencia').value = 0;
+  Utils.$('corte-otro').value = 0;
+  Utils.$('total-otros-metodos').textContent = '$0.00';
+  Utils.$('corte-observaciones').value = '';
+}
