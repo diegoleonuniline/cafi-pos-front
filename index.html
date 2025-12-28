@@ -1053,219 +1053,219 @@
     </div>
   </div>
 
-  <!-- MODAL: CERRAR TURNO / CORTE -->
-  <div id="modal-cerrar-turno" class="modal-overlay">
-    <div class="modal modal-md">
-      <div class="modal-header gradient">
-        <h3><i class="fas fa-cash-register"></i> Corte de Caja</h3>
-        <button class="btn-close light" onclick="cerrarModal('modal-cerrar-turno')"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body corte-body">
-        
-        <!-- PASO 1: CONTEO DE EFECTIVO -->
+<!-- MODAL: CERRAR TURNO / CORTE DE CAJA -->
+<div id="modal-cerrar-turno" class="modal-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-header gradient">
+      <h3><i class="fas fa-cash-register"></i> Corte de Caja</h3>
+      <button class="btn-close light" onclick="cerrarModal('modal-cerrar-turno')"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <!-- TABS -->
+    <div class="corte-tabs">
+      <button class="corte-tab active" onclick="cambiarTabCorte(0)">
+        <i class="fas fa-coins"></i> Efectivo
+      </button>
+      <button class="corte-tab" onclick="cambiarTabCorte(1)">
+        <i class="fas fa-credit-card"></i> Otros Métodos
+      </button>
+      <button class="corte-tab" onclick="cambiarTabCorte(2)">
+        <i class="fas fa-clipboard-check"></i> Resumen
+      </button>
+    </div>
+    
+    <div class="modal-body corte-body">
+      
+      <!-- TAB 1: EFECTIVO -->
+      <div class="corte-tab-content active" id="tab-efectivo">
         <div class="corte-seccion">
-          <h4><i class="fas fa-coins"></i> Conteo de Efectivo</h4>
+          <h4><i class="fas fa-money-bill-wave"></i> Conteo de Efectivo</h4>
           
           <div class="conteo-grid">
-            <!-- Monedas -->
-            <div class="conteo-grupo">
-              <span class="conteo-titulo">Monedas</span>
-              <div class="conteo-row">
-                <label>$0.50</label>
-                <input type="number" id="cont-050" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-050">$0.00</span>
-              </div>
-              <div class="conteo-row">
-                <label>$1</label>
-                <input type="number" id="cont-1" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-1">$0.00</span>
-              </div>
-              <div class="conteo-row">
-                <label>$2</label>
-                <input type="number" id="cont-2" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-2">$0.00</span>
-              </div>
-              <div class="conteo-row">
-                <label>$5</label>
-                <input type="number" id="cont-5" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-5">$0.00</span>
-              </div>
-              <div class="conteo-row">
-                <label>$10</label>
-                <input type="number" id="cont-10" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-10">$0.00</span>
-              </div>
-            </div>
-            
             <!-- Billetes -->
             <div class="conteo-grupo">
               <span class="conteo-titulo">Billetes</span>
               <div class="conteo-row">
-                <label>$20</label>
-                <input type="number" id="cont-20" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-20">$0.00</span>
-              </div>
-              <div class="conteo-row">
-                <label>$50</label>
-                <input type="number" id="cont-50" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-50">$0.00</span>
-              </div>
-              <div class="conteo-row">
-                <label>$100</label>
-                <input type="number" id="cont-100" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-100">$0.00</span>
-              </div>
-              <div class="conteo-row">
-                <label>$200</label>
-                <input type="number" id="cont-200" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-200">$0.00</span>
+                <label>$1000</label>
+                <input type="number" id="conteo-1000" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-1000">$0</span>
               </div>
               <div class="conteo-row">
                 <label>$500</label>
-                <input type="number" id="cont-500" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-500">$0.00</span>
+                <input type="number" id="conteo-500" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-500">$0</span>
               </div>
               <div class="conteo-row">
-                <label>$1000</label>
-                <input type="number" id="cont-1000" value="0" min="0" onchange="Turno.calcularConteo()">
-                <span class="conteo-subtotal" id="sub-1000">$0.00</span>
+                <label>$200</label>
+                <input type="number" id="conteo-200" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-200">$0</span>
+              </div>
+              <div class="conteo-row">
+                <label>$100</label>
+                <input type="number" id="conteo-100" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-100">$0</span>
+              </div>
+              <div class="conteo-row">
+                <label>$50</label>
+                <input type="number" id="conteo-50" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-50">$0</span>
+              </div>
+              <div class="conteo-row">
+                <label>$20</label>
+                <input type="number" id="conteo-20" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-20">$0</span>
+              </div>
+            </div>
+            
+            <!-- Monedas -->
+            <div class="conteo-grupo">
+              <span class="conteo-titulo">Monedas</span>
+              <div class="conteo-row">
+                <label>$20</label>
+                <input type="number" id="conteo-m20" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-m20">$0</span>
+              </div>
+              <div class="conteo-row">
+                <label>$10</label>
+                <input type="number" id="conteo-10" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-10">$0</span>
+              </div>
+              <div class="conteo-row">
+                <label>$5</label>
+                <input type="number" id="conteo-5" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-5">$0</span>
+              </div>
+              <div class="conteo-row">
+                <label>$2</label>
+                <input type="number" id="conteo-2" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-2">$0</span>
+              </div>
+              <div class="conteo-row">
+                <label>$1</label>
+                <input type="number" id="conteo-1" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-1">$0</span>
+              </div>
+              <div class="conteo-row">
+                <label>$0.50</label>
+                <input type="number" id="conteo-050" value="0" min="0" onchange="calcularConteoEfectivo()">
+                <span class="conteo-subtotal" id="sub-050">$0</span>
               </div>
             </div>
           </div>
           
           <div class="conteo-total-row">
             <span>Total Efectivo Contado:</span>
-            <strong id="conteo-total-efectivo">$0.00</strong>
+            <strong id="total-efectivo-contado">$0.00</strong>
           </div>
         </div>
-        
-        <!-- PASO 2: OTROS MÉTODOS DE PAGO -->
+      </div>
+      
+      <!-- TAB 2: OTROS MÉTODOS -->
+      <div class="corte-tab-content" id="tab-otros">
         <div class="corte-seccion">
           <h4><i class="fas fa-credit-card"></i> Otros Métodos de Pago</h4>
+          <p class="corte-hint">Ingresa los montos recibidos por cada método</p>
+          
           <div class="metodos-conteo">
             <div class="metodo-row">
               <label><i class="fas fa-credit-card"></i> Tarjeta</label>
               <div class="input-money-sm">
                 <span>$</span>
-                <input type="number" id="cont-tarjeta" value="0" min="0" step="0.01" onchange="Turno.calcularConteo()">
+                <input type="number" id="corte-tarjeta" value="0" min="0" step="0.01" onchange="calcularTotalCorte()">
               </div>
             </div>
             <div class="metodo-row">
               <label><i class="fas fa-mobile-alt"></i> Transferencia</label>
               <div class="input-money-sm">
                 <span>$</span>
-                <input type="number" id="cont-transferencia" value="0" min="0" step="0.01" onchange="Turno.calcularConteo()">
+                <input type="number" id="corte-transferencia" value="0" min="0" step="0.01" onchange="calcularTotalCorte()">
               </div>
             </div>
             <div class="metodo-row">
               <label><i class="fas fa-wallet"></i> Otro</label>
               <div class="input-money-sm">
                 <span>$</span>
-                <input type="number" id="cont-otro" value="0" min="0" step="0.01" onchange="Turno.calcularConteo()">
+                <input type="number" id="corte-otro" value="0" min="0" step="0.01" onchange="calcularTotalCorte()">
               </div>
             </div>
           </div>
-        </div>
-        
-        <!-- TOTAL GENERAL -->
-        <div class="corte-seccion total-general">
-          <div class="total-general-row">
-            <span>TOTAL CONTADO</span>
-            <strong id="conteo-total-general">$0.00</strong>
+          
+          <div class="conteo-total-row" style="margin-top:20px; background: var(--secondary);">
+            <span>Total Otros Métodos:</span>
+            <strong id="total-otros-metodos">$0.00</strong>
           </div>
         </div>
-        
-        <!-- Observaciones -->
+      </div>
+      
+      <!-- TAB 3: RESUMEN -->
+      <div class="corte-tab-content" id="tab-resumen">
         <div class="corte-seccion">
-          <div class="form-group" style="margin:0;">
+          <h4><i class="fas fa-chart-bar"></i> Resumen del Turno</h4>
+          
+          <div class="resumen-turno-grid">
+            <div class="resumen-item">
+              <span class="resumen-label">Saldo Inicial</span>
+              <span class="resumen-value" id="resumen-saldo-inicial">$0.00</span>
+            </div>
+            <div class="resumen-item">
+              <span class="resumen-label">Ventas Totales</span>
+              <span class="resumen-value success" id="resumen-ventas">$0.00</span>
+            </div>
+            <div class="resumen-item">
+              <span class="resumen-label">Ingresos</span>
+              <span class="resumen-value success" id="resumen-ingresos">$0.00</span>
+            </div>
+            <div class="resumen-item">
+              <span class="resumen-label">Egresos</span>
+              <span class="resumen-value danger" id="resumen-egresos">$0.00</span>
+            </div>
+          </div>
+          
+          <div class="resumen-esperado">
+            <div class="esperado-row">
+              <span>Efectivo Esperado:</span>
+              <strong id="resumen-efectivo-esperado">$0.00</strong>
+            </div>
+            <div class="esperado-row">
+              <span>Efectivo Contado:</span>
+              <strong id="resumen-efectivo-contado">$0.00</strong>
+            </div>
+            <div class="esperado-row diferencia" id="row-diferencia">
+              <span>Diferencia:</span>
+              <strong id="resumen-diferencia">$0.00</strong>
+            </div>
+          </div>
+          
+          <div class="total-general">
+            <div class="total-general-row">
+              <span>TOTAL DECLARADO:</span>
+              <strong id="total-declarado">$0.00</strong>
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-top:16px;">
             <label>Observaciones (opcional)</label>
-            <textarea id="corte-observaciones" rows="2" placeholder="Notas sobre el cierre de turno..."></textarea>
+            <textarea id="corte-observaciones" rows="2" placeholder="Notas del corte..."></textarea>
           </div>
         </div>
-        
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="cerrarModal('modal-cerrar-turno')">Cancelar</button>
-        <button class="btn btn-success" id="btn-confirmar-corte" onclick="Turno.procesarCorte()">
-          <i class="fas fa-calculator"></i> Calcular Corte
-        </button>
-      </div>
+      
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-cerrar-turno')">Cancelar</button>
+      <button class="btn btn-outline" id="btn-tab-anterior" onclick="tabAnteriorCorte()" style="display:none;">
+        <i class="fas fa-arrow-left"></i> Anterior
+      </button>
+      <button class="btn btn-primary" id="btn-tab-siguiente" onclick="tabSiguienteCorte()">
+        Siguiente <i class="fas fa-arrow-right"></i>
+      </button>
+      <button class="btn btn-success" id="btn-calcular-corte" onclick="procesarCorte()" style="display:none;">
+        <i class="fas fa-calculator"></i> Cerrar Turno
+      </button>
     </div>
   </div>
-
-  <!-- MODAL: RESULTADO DEL CORTE -->
-  <div id="modal-resultado-corte" class="modal-overlay">
-    <div class="modal modal-md">
-      <div class="modal-header" id="resultado-corte-header">
-        <h3><i class="fas fa-chart-bar"></i> Resultado del Corte</h3>
-        <button class="btn-close light" onclick="cerrarModal('modal-resultado-corte')"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body">
-        
-        <!-- Resultado principal -->
-        <div class="resultado-principal" id="resultado-box">
-          <div class="resultado-icon" id="resultado-icon">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <h2 id="resultado-titulo">¡Cuadre Perfecto!</h2>
-          <p id="resultado-mensaje">El efectivo en caja coincide con las ventas</p>
-        </div>
-        
-        <!-- Resumen rápido -->
-        <div class="resultado-resumen">
-          <div class="resumen-row">
-            <span>Ventas del turno</span>
-            <strong id="res-ventas">$0.00</strong>
-          </div>
-          <div class="resumen-row">
-            <span>Efectivo esperado</span>
-            <strong id="res-esperado">$0.00</strong>
-          </div>
-          <div class="resumen-row">
-            <span>Efectivo contado</span>
-            <strong id="res-contado">$0.00</strong>
-          </div>
-          <div class="resumen-row diferencia" id="res-diferencia-row">
-            <span>Diferencia</span>
-            <strong id="res-diferencia">$0.00</strong>
-          </div>
-        </div>
-        
-        <!-- Desglose -->
-        <details class="resultado-desglose">
-          <summary><i class="fas fa-list"></i> Ver desglose completo</summary>
-          <div class="desglose-content">
-            <div class="desglose-section">
-              <h5>Por Tipo de Venta</h5>
-              <div class="desglose-row"><span>Contado</span><span id="res-contado-tipo">$0.00</span></div>
-              <div class="desglose-row"><span>Crédito</span><span id="res-credito">$0.00</span></div>
-              <div class="desglose-row"><span>Canceladas</span><span id="res-canceladas">$0.00</span></div>
-            </div>
-            <div class="desglose-section">
-              <h5>Por Método de Pago</h5>
-              <div class="desglose-row"><span>Efectivo</span><span id="res-efectivo">$0.00</span></div>
-              <div class="desglose-row"><span>Tarjeta</span><span id="res-tarjeta">$0.00</span></div>
-              <div class="desglose-row"><span>Transferencia</span><span id="res-transferencia">$0.00</span></div>
-            </div>
-            <div class="desglose-section">
-              <h5>Movimientos de Caja</h5>
-              <div class="desglose-row"><span>Ingresos</span><span id="res-ingresos">$0.00</span></div>
-              <div class="desglose-row"><span>Egresos</span><span id="res-egresos">$0.00</span></div>
-            </div>
-          </div>
-        </details>
-        
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="Turno.volverConteo()">
-          <i class="fas fa-arrow-left"></i> Volver a Contar
-        </button>
-        <button class="btn btn-danger" id="btn-cerrar-turno-final" onclick="Turno.confirmarCierre()">
-          <i class="fas fa-lock"></i> Cerrar Turno
-        </button>
-      </div>
-    </div>
-  </div>
+</div>
   
   <!-- MODAL: CONFIRMACIÓN PERSONALIZADA -->
   <div id="modal-confirm" class="modal-overlay">
