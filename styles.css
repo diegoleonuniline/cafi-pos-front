@@ -3349,3 +3349,125 @@ body {
   width: 18px;
   color: var(--primary);
 }
+/* ============================================
+   CORTE DE CAJA - TABS
+   ============================================ */
+.corte-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--gray-200);
+  background: var(--gray-50);
+}
+
+.corte-tab {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-500);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.corte-tab:hover {
+  color: var(--primary);
+  background: var(--gray-100);
+}
+
+.corte-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: var(--white);
+}
+
+.corte-tab i {
+  font-size: 16px;
+}
+
+.corte-tab-content {
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+
+.corte-tab-content.active {
+  display: block;
+}
+
+.corte-hint {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-bottom: 16px;
+}
+
+/* Resumen turno grid */
+.resumen-turno-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.resumen-item {
+  padding: 14px;
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.resumen-label {
+  display: block;
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-bottom: 4px;
+}
+
+.resumen-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.resumen-value.success { color: var(--success); }
+.resumen-value.danger { color: var(--danger); }
+
+/* Esperado */
+.resumen-esperado {
+  background: var(--gray-800);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.esperado-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  color: white;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.esperado-row:last-child {
+  border-bottom: none;
+}
+
+.esperado-row span {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.esperado-row strong {
+  font-size: 18px;
+}
+
+.esperado-row.diferencia strong.positivo { color: #34d399; }
+.esperado-row.diferencia strong.negativo { color: #f87171; }
+.esperado-row.diferencia strong.cero { color: white; }
