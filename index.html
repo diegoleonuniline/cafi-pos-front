@@ -422,41 +422,39 @@
     </div>
   </div>
   
-  <!-- MODAL: CRUD PRODUCTOS -->
-  <div id="modal-productos" class="modal-overlay">
-    <div class="modal modal-xl">
-      <div class="modal-header">
-        <h3><i class="fas fa-box"></i> Productos</h3>
-        <button class="btn-close" onclick="cerrarModal('modal-productos')"><i class="fas fa-times"></i></button>
+<!-- MODAL: CRUD PRODUCTOS -->
+<div id="modal-productos" class="modal-overlay">
+  <div class="modal modal-xl">
+    <div class="modal-header">
+      <h3><i class="fas fa-box"></i> Productos</h3>
+      <button class="btn-close" onclick="cerrarModal('modal-productos')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-toolbar">
+      <div class="search-field">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Buscar producto..." oninput="filtrarProductosCRUD(this.value)">
       </div>
-      <div class="modal-toolbar">
-        <div class="search-field">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Buscar producto..." oninput="filtrarProductosCRUD(this.value)">
-        </div>
-        <button class="btn btn-primary" onclick="mostrarFormProducto()"><i class="fas fa-plus"></i> Nuevo</button>
-      </div>
-      <div class="modal-body no-padding">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>P1</th>
-              <th>P2</th>
-              <th>P3</th>
-              <th>P4</th>
-              <th>P5</th>
-              <th>P6</th>
-              <th>Und</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tbody-productos"></tbody>
-        </table>
-      </div>
+      <button class="btn btn-primary" onclick="mostrarFormProducto()"><i class="fas fa-plus"></i> Nuevo</button>
+    </div>
+    <div class="modal-body no-padding">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Unidad</th>
+            <th>Peso</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-productos"></tbody>
+      </table>
     </div>
   </div>
+</div>
   
   <!-- MODAL: FORM PRODUCTO -->
 <div id="modal-form-producto" class="modal-overlay">
