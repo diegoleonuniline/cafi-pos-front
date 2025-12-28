@@ -995,13 +995,11 @@ const CRUDProductos = {
           </div>
         </td>
         <td>${p.PuntoVentaNombre || p.NombreProducto}</td>
+        <td>${p.Categoria || '-'}</td>
         <td>${Utils.formatMoney(p.Precio1)}</td>
-        <td>${Utils.formatMoney(p.Precio2)}</td>
-        <td>${Utils.formatMoney(p.Precio3)}</td>
-        <td>${Utils.formatMoney(p.Precio4)}</td>
-        <td>${Utils.formatMoney(p.Precio5)}</td>
-        <td>${Utils.formatMoney(p.Precio6)}</td>
         <td>${p.UnidadVenta || 'PZ'}</td>
+        <td>${Utils.esActivo(p.VentaPorPeso) ? '<span class="badge warning">Sí</span>' : '-'}</td>
+        <td>${Utils.esActivo(p.Activo) ? '<span class="badge" style="background:#d1fae5;color:#059669">Activo</span>' : '<span class="badge" style="background:#fee2e2;color:#dc2626">Inactivo</span>'}</td>
         <td class="actions">
           <button class="btn-icon" onclick="CRUDProductos.editar('${p.ProductoID}')"><i class="fas fa-pen"></i></button>
           <button class="btn-icon danger" onclick="CRUDProductos.eliminar('${p.ProductoID}')"><i class="fas fa-trash"></i></button>
@@ -1014,20 +1012,28 @@ const CRUDProductos = {
     const filtrado = State.productos.filter(p => 
       (p.PuntoVentaNombre || '').toLowerCase().includes(texto.toLowerCase()) ||
       (p.NombreProducto || '').toLowerCase().includes(texto.toLowerCase()) ||
+      (p.Categoria || '').toLowerCase().includes(texto.toLowerCase()) ||
+      (p.Marca || '').toLowerCase().includes(texto.toLowerCase()) ||
       String(p.CodigoBarras || '').includes(texto)
     );
     this.render(filtrado);
+  },
+
+  cargarProveedores() {
+    const select = Utils.$('prod-proveedor');
+    select.innerHTML = '<option value="">-- Sin proveedor --</option>' +
+      State.proveedores.map(p => `<option value="${p.ProveedorID}">${p.Nombre}</option>`).join('');
   },
 
   mostrarForm(id = null) {
     const form = Utils.$('form-producto');
     form.reset();
     Utils.$('prod-id').value = '';
+    Utils.$('prod-activo').checked = true;
+    Utils.$('grupo-unidad-base').style.display = 'none';
+    Utils.$('grupo-precio-oferta').style.display = 'none';
     
-    const permiteDesc = Utils.$('prod-permite-descuento');
-    if (permiteDesc) permiteDesc.checked = false;
-    const descMax = Utils.$('prod-descuento-max');
-    if (descMax) descMax.value = '';
+    this.cargarProveedores();
     
     if (id) {
       const p = Utils.buscarEnArray(State.productos, 'ProductoID', id);
@@ -1037,10 +1043,32 @@ const CRUDProductos = {
         Utils.$('prod-nombre').value = p.NombreProducto || '';
         Utils.$('prod-pv-nombre').value = p.PuntoVentaNombre || '';
         Utils.$('prod-codigo').value = p.CodigoBarras || '';
+        Utils.$('prod-categoria').value = p.Categoria || '';
+        Utils.$('prod-marca').value = p.Marca || '';
+        Utils.$('prod-proveedor').value = p.ProveedorID || '';
+        Utils.$('prod-imagen').value = p.Imagen_URL || p.Imagen || '';
+        Utils.$('prod-unidad-compra').value = p.UnidadCompra || 'PZ';
+        Utils.$('prod-contenido').value = p.ContenidoUnidadCompra || '';
         Utils.$('prod-unidad').value = p.UnidadVenta || 'PZ';
-        if (permiteDesc) permiteDesc.checked = Utils.esActivo(p.PermiteDescuento);
-        if (descMax) descMax.value = p.DescuentoMax || '';
-        for (let i = 1; i <= 6; i++) Utils.$('prod-precio' + i).value = p['Precio' + i] || '';
+        Utils.$('prod-venta-peso').checked = Utils.esActivo(p.VentaPorPeso);
+        Utils.$('prod-unidad-base').value = p.UnidadBase || 'KG';
+        Utils.$('prod-permite-decimales').checked = Utils.esActivo(p.PermiteDecimales);
+        Utils.$('prod-permite-descuento').checked = Utils.esActivo(p.PermiteDescuento);
+        Utils.$('prod-descuento-max').value = p.DescuentoMax || '';
+        Utils.$('prod-destacado').checked = Utils.esActivo(p.Destacado);
+        Utils.$('prod-orden-destacado').value = p.OrdenDestacado || '';
+        Utils.$('prod-en-oferta').checked = Utils.esActivo(p.EnOferta);
+        Utils.$('prod-precio-oferta').value = p.PrecioOferta || '';
+        Utils.$('prod-puntos').value = p.Puntos || '';
+        Utils.$('prod-valor-puntos').value = p.ValorPuntos || '';
+        Utils.$('prod-activo').checked = Utils.esActivo(p.Activo);
+        
+        for (let i = 1; i <= 6; i++) {
+          Utils.$('prod-precio' + i).value = p['Precio' + i] || '';
+        }
+        
+        toggleVentaPeso();
+        toggleOferta();
       }
     } else {
       Utils.$('form-producto-titulo').innerHTML = '<i class="fas fa-box"></i> Nuevo Producto';
@@ -1052,7 +1080,7 @@ const CRUDProductos = {
 
   async guardar() {
     const id = Utils.$('prod-id').value;
-    const nombre = Utils.$('prod-nombre').value;
+    const nombre = Utils.$('prod-nombre').value.trim();
     if (!nombre) { Toast.error('Nombre requerido'); return; }
     
     const btn = Utils.$('btn-guardar-producto');
@@ -1061,25 +1089,61 @@ const CRUDProductos = {
     
     const data = {
       empresaID: State.usuario.empresaID,
+      proveedorID: Utils.$('prod-proveedor').value || '',
       nombreProducto: nombre,
-      puntoVentaNombre: Utils.$('prod-pv-nombre').value || nombre,
-      codigoBarras: Utils.$('prod-codigo').value,
+      puntoVentaNombre: Utils.$('prod-pv-nombre').value.trim() || nombre,
+      codigoBarras: Utils.$('prod-codigo').value.trim(),
+      imagen: Utils.$('prod-imagen').value.trim(),
+      categoria: Utils.$('prod-categoria').value.trim(),
+      marca: Utils.$('prod-marca').value.trim(),
+      unidadCompra: Utils.$('prod-unidad-compra').value,
+      contenidoUnidadCompra: parseInt(Utils.$('prod-contenido').value) || 1,
       unidadVenta: Utils.$('prod-unidad').value,
-      permiteDescuento: Utils.$('prod-permite-descuento')?.checked || false,
-      descuentoMax: parseFloat(Utils.$('prod-descuento-max')?.value) || 0
+      ventaPorPeso: Utils.$('prod-venta-peso').checked,
+      unidadBase: Utils.$('prod-unidad-base').value,
+      permiteDecimales: Utils.$('prod-permite-decimales').checked,
+      permiteDescuento: Utils.$('prod-permite-descuento').checked,
+      descuentoMax: parseFloat(Utils.$('prod-descuento-max').value) || 0,
+      destacado: Utils.$('prod-destacado').checked,
+      ordenDestacado: parseInt(Utils.$('prod-orden-destacado').value) || 0,
+      enOferta: Utils.$('prod-en-oferta').checked,
+      precioOferta: parseFloat(Utils.$('prod-precio-oferta').value) || 0,
+      puntos: parseInt(Utils.$('prod-puntos').value) || 0,
+      valorPuntos: parseInt(Utils.$('prod-valor-puntos').value) || 0,
+      activo: Utils.$('prod-activo').checked
     };
-    for (let i = 1; i <= 6; i++) data['precio' + i] = parseFloat(Utils.$('prod-precio' + i).value) || 0;
+    
+    for (let i = 1; i <= 6; i++) {
+      data['precio' + i] = parseFloat(Utils.$('prod-precio' + i).value) || 0;
+    }
     
     try {
       let res;
       if (id) {
         const updateData = {
+          ProveedorID: data.proveedorID,
           NombreProducto: data.nombreProducto,
           PuntoVentaNombre: data.puntoVentaNombre,
           CodigoBarras: data.codigoBarras,
+          Imagen: data.imagen,
+          Imagen_URL: data.imagen,
+          Categoria: data.categoria,
+          Marca: data.marca,
+          UnidadCompra: data.unidadCompra,
+          ContenidoUnidadCompra: data.contenidoUnidadCompra,
           UnidadVenta: data.unidadVenta,
+          VentaPorPeso: data.ventaPorPeso ? 'Y' : 'N',
+          UnidadBase: data.unidadBase,
+          PermiteDecimales: data.permiteDecimales ? 'Y' : 'N',
           PermiteDescuento: data.permiteDescuento ? 'Y' : 'N',
-          DescuentoMax: data.descuentoMax
+          DescuentoMax: data.descuentoMax,
+          Destacado: data.destacado ? 'Y' : 'N',
+          OrdenDestacado: data.ordenDestacado,
+          EnOferta: data.enOferta ? 'Y' : 'N',
+          PrecioOferta: data.precioOferta,
+          Puntos: data.puntos,
+          ValorPuntos: data.valorPuntos,
+          Activo: data.activo ? 'Y' : 'N'
         };
         for (let i = 1; i <= 6; i++) updateData['Precio' + i] = data['precio' + i];
         res = await API.editarProducto(id, updateData);
@@ -1123,6 +1187,16 @@ const CRUDProductos = {
   }
 };
 
+// Funciones toggle para el form
+function toggleVentaPeso() {
+  const checked = Utils.$('prod-venta-peso').checked;
+  Utils.$('grupo-unidad-base').style.display = checked ? 'block' : 'none';
+}
+
+function toggleOferta() {
+  const checked = Utils.$('prod-en-oferta').checked;
+  Utils.$('grupo-precio-oferta').style.display = checked ? 'block' : 'none';
+}
 // ============================================
 // CRUD CLIENTES
 // ============================================
