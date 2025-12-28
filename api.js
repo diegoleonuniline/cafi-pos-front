@@ -192,3 +192,10 @@ const API = {
     }
   }
 };
+async calcularResumenTurno(data) {
+  return this.request('/turnos/resumen', 'POST', data);
+},
+
+async cerrarTurno(data) {
+  return this.request('/turnos/cerrar', 'POST', data);
+},
