@@ -77,7 +77,14 @@ async function cargarDatosIniciales() {
       State.clientes = res.clientes || [];
       State.metodosPago = res.metodosPago || [];
       State.proveedores = res.proveedores || [];
-      console.log('Productos cargados:', State.productos.length);
+      State.marcas = res.marcas || [];           // <-- AGREGAR
+      State.categorias = res.categorias || [];   // <-- AGREGAR
+      console.log('Datos cargados:', {
+        productos: State.productos.length,
+        marcas: State.marcas.length,
+        categorias: State.categorias.length,
+        proveedores: State.proveedores.length
+      });
       UI.mostrarApp();
     } else {
       Toast.error('Error al cargar datos: ' + (res.error || 'desconocido'));
