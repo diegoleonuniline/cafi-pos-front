@@ -72,27 +72,33 @@ document.addEventListener('DOMContentLoaded', () => {
 async function cargarDatosIniciales() {
   try {
     const res = await API.cargarDatos(State.usuario.empresaID);
+    console.log('Respuesta API:', res); // Para debug
+    
     if (res.success) {
-      State.productos = res.productos || [];
-      State.clientes = res.clientes || [];
-      State.metodosPago = res.metodosPago || [];
-      State.proveedores = res.proveedores || [];
-      State.marcas = res.marcas || [];           // <-- AGREGAR
-      State.categorias = res.categorias || [];   // <-- AGREGAR
+      State.productos = Array.isArray(res.productos) ? res.productos : [];
+      State.clientes = Array.isArray(res.clientes) ? res.clientes : [];
+      State.metodosPago = Array.isArray(res.metodosPago) ? res.metodosPago : [];
+      State.proveedores = Array.isArray(res.proveedores) ? res.proveedores : [];
+      State.marcas = Array.isArray(res.marcas) ? res.marcas : [];
+      State.categorias = Array.isArray(res.categorias) ? res.categorias : [];
+      
       console.log('Datos cargados:', {
         productos: State.productos.length,
+        clientes: State.clientes.length,
+        metodosPago: State.metodosPago.length,
+        proveedores: State.proveedores.length,
         marcas: State.marcas.length,
-        categorias: State.categorias.length,
-        proveedores: State.proveedores.length
+        categorias: State.categorias.length
       });
+      
       UI.mostrarApp();
     } else {
-      Toast.error('Error al cargar datos: ' + (res.error || 'desconocido'));
+      Toast.error('Error: ' + (res.error || 'desconocido'));
       Auth.logout(true);
     }
   } catch (e) {
-    Toast.error('Error de conexión con el servidor');
-    console.error(e);
+    console.error('Error cargando datos:', e);
+    Toast.error('Error de conexión');
     Auth.logout(true);
   }
 }
