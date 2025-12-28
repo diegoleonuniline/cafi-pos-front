@@ -9,6 +9,8 @@ const State = {
   clientes: [],
   metodosPago: [],
   proveedores: [],
+    marcas: [],        // <-- AGREGAR
+  categorias: [],    // <-- AGREGAR
   carrito: [],
   clienteSeleccionado: null,
   metodoPagoSeleccionado: null,
@@ -19,6 +21,7 @@ const State = {
   ventaActualID: null,
   ultimaVenta: null,
   productoTemporal: null
+  
 };
 
 // Utilidades
