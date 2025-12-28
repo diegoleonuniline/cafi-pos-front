@@ -996,7 +996,10 @@ const Cliente = {
 // ============================================
 const CRUDProductos = {
   render(lista = State.productos) {
-    Utils.$('tbody-productos').innerHTML = lista.map(p => `
+    Utils.$('tbody-productos').innerHTML = lista.map(p => {
+      const categoria = Utils.buscarEnArray(State.categorias, 'CategoriaID', p.Categoria);
+      const marca = Utils.buscarEnArray(State.marcas, 'Id', p.Marca);
+      return `
       <tr>
         <td>
           <div class="product-cell-with-img">
@@ -1005,34 +1008,47 @@ const CRUDProductos = {
           </div>
         </td>
         <td>${p.PuntoVentaNombre || p.NombreProducto}</td>
-        <td>${p.Categoria || '-'}</td>
+        <td>${categoria?.Nombre || '-'}</td>
+        <td>${marca?.Nombre || '-'}</td>
         <td>${Utils.formatMoney(p.Precio1)}</td>
         <td>${p.UnidadVenta || 'PZ'}</td>
-        <td>${Utils.esActivo(p.VentaPorPeso) ? '<span class="badge warning">Sí</span>' : '-'}</td>
         <td>${Utils.esActivo(p.Activo) ? '<span class="badge" style="background:#d1fae5;color:#059669">Activo</span>' : '<span class="badge" style="background:#fee2e2;color:#dc2626">Inactivo</span>'}</td>
         <td class="actions">
           <button class="btn-icon" onclick="CRUDProductos.editar('${p.ProductoID}')"><i class="fas fa-pen"></i></button>
           <button class="btn-icon danger" onclick="CRUDProductos.eliminar('${p.ProductoID}')"><i class="fas fa-trash"></i></button>
         </td>
       </tr>
-    `).join('');
+    `}).join('');
   },
 
   filtrar(texto) {
-    const filtrado = State.productos.filter(p => 
-      (p.PuntoVentaNombre || '').toLowerCase().includes(texto.toLowerCase()) ||
-      (p.NombreProducto || '').toLowerCase().includes(texto.toLowerCase()) ||
-      (p.Categoria || '').toLowerCase().includes(texto.toLowerCase()) ||
-      (p.Marca || '').toLowerCase().includes(texto.toLowerCase()) ||
-      String(p.CodigoBarras || '').includes(texto)
-    );
+    const filtrado = State.productos.filter(p => {
+      const categoria = Utils.buscarEnArray(State.categorias, 'CategoriaID', p.Categoria);
+      const marca = Utils.buscarEnArray(State.marcas, 'Id', p.Marca);
+      return (p.PuntoVentaNombre || '').toLowerCase().includes(texto.toLowerCase()) ||
+        (p.NombreProducto || '').toLowerCase().includes(texto.toLowerCase()) ||
+        (categoria?.Nombre || '').toLowerCase().includes(texto.toLowerCase()) ||
+        (marca?.Nombre || '').toLowerCase().includes(texto.toLowerCase()) ||
+        String(p.CodigoBarras || '').includes(texto);
+    });
     this.render(filtrado);
   },
 
-  cargarProveedores() {
-    const select = Utils.$('prod-proveedor');
-    select.innerHTML = '<option value="">-- Sin proveedor --</option>' +
-      State.proveedores.map(p => `<option value="${p.ProveedorID}">${p.Nombre}</option>`).join('');
+  cargarCatalogos() {
+    // Proveedores
+    const selectProv = Utils.$('prod-proveedor');
+    selectProv.innerHTML = '<option value="">-- Sin proveedor --</option>' +
+      State.proveedores.map(p => `<option value="${p.ProveedorID}">${p.NombreProveedor}</option>`).join('');
+    
+    // Categorías
+    const selectCat = Utils.$('prod-categoria');
+    selectCat.innerHTML = '<option value="">-- Sin categoría --</option>' +
+      State.categorias.map(c => `<option value="${c.CategoriaID}">${c.Nombre}</option>`).join('');
+    
+    // Marcas
+    const selectMarca = Utils.$('prod-marca');
+    selectMarca.innerHTML = '<option value="">-- Sin marca --</option>' +
+      State.marcas.map(m => `<option value="${m.Id}">${m.Nombre}</option>`).join('');
   },
 
   mostrarForm(id = null) {
@@ -1043,7 +1059,7 @@ const CRUDProductos = {
     Utils.$('grupo-unidad-base').style.display = 'none';
     Utils.$('grupo-precio-oferta').style.display = 'none';
     
-    this.cargarProveedores();
+    this.cargarCatalogos();
     
     if (id) {
       const p = Utils.buscarEnArray(State.productos, 'ProductoID', id);
@@ -1056,7 +1072,6 @@ const CRUDProductos = {
         Utils.$('prod-categoria').value = p.Categoria || '';
         Utils.$('prod-marca').value = p.Marca || '';
         Utils.$('prod-proveedor').value = p.ProveedorID || '';
-        Utils.$('prod-imagen').value = p.Imagen_URL || p.Imagen || '';
         Utils.$('prod-unidad-compra').value = p.UnidadCompra || 'PZ';
         Utils.$('prod-contenido').value = p.ContenidoUnidadCompra || '';
         Utils.$('prod-unidad').value = p.UnidadVenta || 'PZ';
@@ -1103,9 +1118,8 @@ const CRUDProductos = {
       nombreProducto: nombre,
       puntoVentaNombre: Utils.$('prod-pv-nombre').value.trim() || nombre,
       codigoBarras: Utils.$('prod-codigo').value.trim(),
-      imagen: Utils.$('prod-imagen').value.trim(),
-      categoria: Utils.$('prod-categoria').value.trim(),
-      marca: Utils.$('prod-marca').value.trim(),
+      categoria: Utils.$('prod-categoria').value || '',
+      marca: Utils.$('prod-marca').value || '',
       unidadCompra: Utils.$('prod-unidad-compra').value,
       contenidoUnidadCompra: parseInt(Utils.$('prod-contenido').value) || 1,
       unidadVenta: Utils.$('prod-unidad').value,
@@ -1135,8 +1149,6 @@ const CRUDProductos = {
           NombreProducto: data.nombreProducto,
           PuntoVentaNombre: data.puntoVentaNombre,
           CodigoBarras: data.codigoBarras,
-          Imagen: data.imagen,
-          Imagen_URL: data.imagen,
           Categoria: data.categoria,
           Marca: data.marca,
           UnidadCompra: data.unidadCompra,
@@ -1163,10 +1175,7 @@ const CRUDProductos = {
       
       if (res?.success) {
         Modal.cerrar('modal-form-producto');
-        Guardado.show(
-          id ? '¡Actualizado!' : '¡Producto Guardado!',
-          id ? 'El producto se actualizó correctamente' : 'El producto se registró correctamente'
-        );
+        Guardado.show(id ? '¡Actualizado!' : '¡Producto Guardado!', id ? 'El producto se actualizó' : 'El producto se registró');
         sincronizar();
       } else {
         Toast.error(res?.error || 'Error');
