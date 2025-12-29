@@ -1069,9 +1069,6 @@
       <button class="corte-tab" onclick="cambiarTabCorte(1)">
         <i class="fas fa-credit-card"></i> Otros Métodos
       </button>
-      <button class="corte-tab" onclick="cambiarTabCorte(2)">
-        <i class="fas fa-clipboard-check"></i> Resumen
-      </button>
     </div>
     
     <div class="modal-body corte-body">
@@ -1154,7 +1151,7 @@
           </div>
           
           <div class="conteo-total-row">
-            <span>Total Efectivo Contado:</span>
+            <span>Total Efectivo:</span>
             <strong id="total-efectivo-contado">$0.00</strong>
           </div>
         </div>
@@ -1190,57 +1187,9 @@
             </div>
           </div>
           
-          <div class="conteo-total-row" style="margin-top:20px; background: var(--secondary);">
-            <span>Total Otros Métodos:</span>
+          <div class="conteo-total-row" style="margin-top:20px;">
+            <span>Total Otros:</span>
             <strong id="total-otros-metodos">$0.00</strong>
-          </div>
-        </div>
-      </div>
-      
-      <!-- TAB 3: RESUMEN -->
-      <div class="corte-tab-content" id="tab-resumen">
-        <div class="corte-seccion">
-          <h4><i class="fas fa-chart-bar"></i> Resumen del Turno</h4>
-          
-          <div class="resumen-turno-grid">
-            <div class="resumen-item">
-              <span class="resumen-label">Saldo Inicial</span>
-              <span class="resumen-value" id="resumen-saldo-inicial">$0.00</span>
-            </div>
-            <div class="resumen-item">
-              <span class="resumen-label">Ventas Totales</span>
-              <span class="resumen-value success" id="resumen-ventas">$0.00</span>
-            </div>
-            <div class="resumen-item">
-              <span class="resumen-label">Ingresos</span>
-              <span class="resumen-value success" id="resumen-ingresos">$0.00</span>
-            </div>
-            <div class="resumen-item">
-              <span class="resumen-label">Egresos</span>
-              <span class="resumen-value danger" id="resumen-egresos">$0.00</span>
-            </div>
-          </div>
-          
-          <div class="resumen-esperado">
-            <div class="esperado-row">
-              <span>Efectivo Esperado:</span>
-              <strong id="resumen-efectivo-esperado">$0.00</strong>
-            </div>
-            <div class="esperado-row">
-              <span>Efectivo Contado:</span>
-              <strong id="resumen-efectivo-contado">$0.00</strong>
-            </div>
-            <div class="esperado-row diferencia" id="row-diferencia">
-              <span>Diferencia:</span>
-              <strong id="resumen-diferencia">$0.00</strong>
-            </div>
-          </div>
-          
-          <div class="total-general">
-            <div class="total-general-row">
-              <span>TOTAL DECLARADO:</span>
-              <strong id="total-declarado">$0.00</strong>
-            </div>
           </div>
           
           <div class="form-group" style="margin-top:16px;">
@@ -1262,6 +1211,109 @@
       </button>
       <button class="btn btn-success" id="btn-calcular-corte" onclick="procesarCorte()" style="display:none;">
         <i class="fas fa-calculator"></i> Cerrar Turno
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RESULTADO DEL CORTE -->
+<div id="modal-resultado-corte" class="modal-overlay">
+  <div class="modal modal-md">
+    <div class="modal-header" id="resultado-corte-header">
+      <h3><i class="fas fa-clipboard-check"></i> Resultado del Corte</h3>
+      <button class="btn-close light" onclick="cerrarModal('modal-resultado-corte')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      
+      <!-- Resultado principal -->
+      <div class="resultado-principal" id="resultado-box">
+        <div class="resultado-icon" id="resultado-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 id="resultado-titulo">¡Cuadre Perfecto!</h2>
+        <p id="resultado-mensaje">El efectivo en caja coincide con las ventas</p>
+      </div>
+      
+      <!-- Resumen de ventas -->
+      <div class="resultado-seccion">
+        <h4>Resumen del Turno</h4>
+        <div class="resumen-grid">
+          <div class="resumen-row">
+            <span>Ventas Totales</span>
+            <strong id="res-ventas">$0.00</strong>
+          </div>
+          <div class="resumen-row sub">
+            <span class="indent">Contado</span>
+            <span id="res-contado-tipo">$0.00</span>
+          </div>
+          <div class="resumen-row sub">
+            <span class="indent">Crédito</span>
+            <span id="res-credito">$0.00</span>
+          </div>
+          <div class="resumen-row sub">
+            <span class="indent">Canceladas</span>
+            <span id="res-canceladas">$0.00</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Desglose por método -->
+      <div class="resultado-seccion">
+        <h4>Por Método de Pago</h4>
+        <div class="resumen-grid">
+          <div class="resumen-row">
+            <span><i class="fas fa-money-bill-wave"></i> Efectivo</span>
+            <span id="res-efectivo">$0.00</span>
+          </div>
+          <div class="resumen-row">
+            <span><i class="fas fa-credit-card"></i> Tarjeta</span>
+            <span id="res-tarjeta">$0.00</span>
+          </div>
+          <div class="resumen-row">
+            <span><i class="fas fa-mobile-alt"></i> Transferencia</span>
+            <span id="res-transferencia">$0.00</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Movimientos -->
+      <div class="resultado-seccion">
+        <h4>Movimientos de Caja</h4>
+        <div class="resumen-grid">
+          <div class="resumen-row">
+            <span><i class="fas fa-arrow-down text-success"></i> Ingresos</span>
+            <span class="text-success" id="res-ingresos">$0.00</span>
+          </div>
+          <div class="resumen-row">
+            <span><i class="fas fa-arrow-up text-danger"></i> Egresos</span>
+            <span class="text-danger" id="res-egresos">$0.00</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Cuadre -->
+      <div class="resultado-seccion cuadre">
+        <div class="resumen-row grande">
+          <span>Efectivo Esperado</span>
+          <strong id="res-esperado">$0.00</strong>
+        </div>
+        <div class="resumen-row grande">
+          <span>Efectivo Contado</span>
+          <strong id="res-contado">$0.00</strong>
+        </div>
+        <div class="resumen-row diferencia" id="res-diferencia-row">
+          <span>Diferencia</span>
+          <strong id="res-diferencia">$0.00</strong>
+        </div>
+      </div>
+      
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="Turno.volverConteo()">
+        <i class="fas fa-redo"></i> Volver a Contar
+      </button>
+      <button class="btn btn-success" id="btn-cerrar-turno-final" onclick="Turno.confirmarCierre()">
+        <i class="fas fa-lock"></i> Confirmar Cierre
       </button>
     </div>
   </div>
