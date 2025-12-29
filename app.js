@@ -2435,12 +2435,11 @@ function calcularTotalCorte() {
 
 function actualizarResumenCorte() {
   const efectivoContado = parseFloat(Utils.$('total-efectivo-contado')?.textContent.replace(/[^0-9.-]/g, '')) || 0;
-  const saldoInicial = State.turno?.saldoInicial || 0;
+  const saldoInicial = Turno.actual?.saldoInicial || 0;
   
   Utils.$('resumen-saldo-inicial').textContent = Utils.formatMoney(saldoInicial);
   Utils.$('resumen-efectivo-contado').textContent = Utils.formatMoney(efectivoContado);
   
-  // La diferencia se calcula después de obtener el resumen del backend
   calcularTotalCorte();
 }
 
@@ -2467,17 +2466,20 @@ function resetCorteForm() {
 // PROCESAR CORTE DE CAJA
 // ============================================
 async function procesarCorte() {
+  if (!Turno.actual || !Turno.actual.id) {
+    Toast.error('No hay turno abierto');
+    return;
+  }
+  
   const btn = Utils.$('btn-calcular-corte');
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
   
   try {
-    // Obtener efectivo contado
     const efectivoContado = parseFloat(Utils.$('total-efectivo-contado')?.textContent.replace(/[^0-9.-]/g, '')) || 0;
     
-    // Obtener resumen del backend
     const resumen = await API.calcularResumenTurno({
-      turnoID: State.turno.id,
+      turnoID: Turno.actual.id,
       empresaID: State.usuario.empresaID,
       sucursalID: State.usuario.sucursalID,
       usuarioEmail: State.usuario.email
@@ -2492,7 +2494,6 @@ async function procesarCorte() {
     
     const r = resumen.resumen;
     
-    // Actualizar resumen en pantalla
     Utils.$('resumen-saldo-inicial').textContent = Utils.formatMoney(r.saldoInicial);
     Utils.$('resumen-ventas').textContent = Utils.formatMoney(r.ventasTotales);
     Utils.$('resumen-ingresos').textContent = Utils.formatMoney(r.ingresos);
@@ -2505,7 +2506,6 @@ async function procesarCorte() {
     difEl.textContent = Utils.formatMoney(diferencia);
     difEl.className = diferencia > 0 ? 'positivo' : diferencia < 0 ? 'negativo' : 'cero';
     
-    // Confirmar cierre
     const confirmado = await Confirm.show(
       '¿Cerrar turno?',
       `Efectivo esperado: ${Utils.formatMoney(r.efectivoEsperado)}\nEfectivo contado: ${Utils.formatMoney(efectivoContado)}\nDiferencia: ${Utils.formatMoney(diferencia)}`
@@ -2517,9 +2517,8 @@ async function procesarCorte() {
       return;
     }
     
-    // Cerrar turno
     const resultado = await API.cerrarTurno({
-      turnoID: State.turno.id,
+      turnoID: Turno.actual.id,
       empresaID: State.usuario.empresaID,
       sucursalID: State.usuario.sucursalID,
       usuarioEmail: State.usuario.email,
@@ -2529,8 +2528,8 @@ async function procesarCorte() {
     
     if (resultado.success) {
       Modal.cerrar('modal-cerrar-turno');
-      State.turno = null;
-      Turno.actualizarUI();
+      Turno.actual = null;
+      Turno.actualizarUI(false);
       Toast.success('Turno cerrado correctamente');
       resetCorteForm();
     } else {
