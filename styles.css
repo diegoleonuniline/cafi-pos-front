@@ -1,6 +1,5 @@
 /* ============================================
    CAFI POS - ESTILOS COMPLETOS
-   Frontend Independiente
    ============================================ */
 
 /* RESET & VARIABLES */
@@ -61,8 +60,8 @@ body {
 /* UTILIDADES */
 .text-right { text-align: right; }
 .center { text-align: center; }
-.text-success { color: var(--success); }
-.text-danger { color: var(--danger); }
+.text-success { color: var(--success) !important; }
+.text-danger { color: var(--danger) !important; }
 
 /* ============================================
    LOGO SVG
@@ -881,6 +880,39 @@ body {
   margin-bottom: 8px;
 }
 
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--dark);
+  transition: var(--transition);
+  background: var(--white);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45, 61, 191, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.form-group .input-icon input {
+  padding-left: 44px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
 /* ============================================
    MODALES
    ============================================ */
@@ -951,12 +983,20 @@ body {
 .modal-header.danger h3 { color: white; }
 
 .modal-header.success {
-  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%) !important;
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+  color: white;
 }
 
+.modal-header.success h3 { color: white; }
+.modal-header.success h3 i { color: rgba(255,255,255,0.8); }
+
 .modal-header.warning {
-  background: linear-gradient(135deg, #d97706 0%, var(--warning) 100%) !important;
+  background: linear-gradient(135deg, #d97706 0%, var(--warning) 100%);
+  color: white;
 }
+
+.modal-header.warning h3 { color: white; }
+.modal-header.warning h3 i { color: rgba(255,255,255,0.8); }
 
 .btn-close {
   width: 30px;
@@ -2360,10 +2400,10 @@ body {
   align-items: center;
   gap: 14px;
   padding: 16px 18px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(45, 61, 191, 0.08) 0%, rgba(108, 43, 217, 0.08) 100%);
   border-radius: var(--radius-lg);
   margin-bottom: 24px;
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(45, 61, 191, 0.15);
 }
 
 .turno-info-box i {
@@ -2388,8 +2428,57 @@ body {
 }
 
 /* ============================================
-   CORTE DE CAJA
+   CORTE DE CAJA - TABS
    ============================================ */
+.corte-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--gray-200);
+  background: var(--gray-50);
+}
+
+.corte-tab {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-500);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.corte-tab:hover {
+  color: var(--primary);
+  background: var(--gray-100);
+}
+
+.corte-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: var(--white);
+}
+
+.corte-tab i {
+  font-size: 16px;
+}
+
+.corte-tab-content {
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+
+.corte-tab-content.active {
+  display: block;
+}
+
+/* Corte body */
 .corte-body {
   max-height: 65vh;
   overflow-y: auto;
@@ -2422,582 +2511,13 @@ body {
   color: var(--primary);
 }
 
+.corte-hint {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-bottom: 16px;
+}
+
 /* Conteo de efectivo */
-.conteo-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.conteo-grupo {
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-}
-
-.conteo-titulo {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--gray-500);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 12px;
-}
-
-.conteo-row {
-  display: grid;
-  grid-template-columns: 50px 1fr 80px;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.conteo-row label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-700);
-}
-
-.conteo-row input {
-  width: 100%;
-  padding: 8px 10px;
-  border: 2px solid var(--gray-200);
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
-  font-weight: 600;
-}
-
-.conteo-row input:focus {
-  outline: none;
-  border-color: var(--primary);
-}
-
-.conteo-subtotal {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gray-500);
-  text-align: right;
-}
-
-.conteo-total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-  padding: 16px 20px;
-  background: var(--gradient);
-  border-radius: var(--radius-lg);
-  color: white;
-}
-
-.conteo-total-row span {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.conteo-total-row strong {
-  font-size: 24px;
-  font-weight: 700;
-}
-
-/* Métodos de pago conteo */
-.metodos-conteo {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.metodo-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: var(--gray-50);
-  border-radius: 10px;
-}
-
-.metodo-row label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-700);
-}
-
-.metodo-row label i {
-  color: var(--primary);
-  width: 20px;
-}
-
-.input-money-sm {
-  display: flex;
-  align-items: center;
-  background: white;
-  border: 2px solid var(--gray-200);
-  border-radius: 8px;
-  overflow: hidden;
-  width: 140px;
-}
-
-.input-money-sm span {
-  padding: 8px 10px;
-  background: var(--gray-100);
-  color: var(--gray-500);
-  font-weight: 600;
-}
-
-.input-money-sm input {
-  width: 100%;
-  padding: 8px 10px;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: right;
-}
-
-.input-money-sm input:focus {
-  outline: none;
-}
-
-/* Total general */
-.total-general {
-  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%) !important;
-  border-radius: var(--radius-lg) !important;
-  padding: 20px !important;
-}
-
-.total-general-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
-}
-
-.total-general-row span {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.total-general-row strong {
-  font-size: 32px;
-  font-weight: 800;
-}
-
-/* ============================================
-   RESULTADO DEL CORTE
-   ============================================ */
-.resultado-principal {
-  text-align: center;
-  padding: 30px 20px;
-  border-radius: 16px;
-  margin-bottom: 20px;
-}
-
-.resultado-principal.success {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-}
-
-.resultado-principal.warning {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
-}
-
-.resultado-principal.danger {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
-}
-
-.resultado-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-}
-
-.resultado-principal.success .resultado-icon { color: var(--success); }
-.resultado-principal.warning .resultado-icon { color: var(--warning); }
-.resultado-principal.danger .resultado-icon { color: var(--danger); }
-
-.resultado-principal h2 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  color: var(--dark);
-}
-
-.resultado-principal p {
-  font-size: 14px;
-  color: var(--gray-500);
-  margin: 0;
-}
-
-/* Resumen resultado */
-.resultado-resumen {
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.resumen-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--gray-200);
-}
-
-.resumen-row:last-child {
-  border-bottom: none;
-}
-
-.resumen-row span {
-  color: var(--gray-500);
-  font-size: 14px;
-}
-
-.resumen-row strong {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--dark);
-}
-
-.resumen-row.diferencia {
-  margin-top: 8px;
-  padding-top: 12px;
-  border-top: 2px solid var(--gray-200);
-  border-bottom: none;
-}
-
-.resumen-row.diferencia.positivo strong { color: var(--success); }
-.resumen-row.diferencia.negativo strong { color: var(--danger); }
-
-/* Desglose desplegable */
-.resultado-desglose {
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.resultado-desglose summary {
-  padding: 14px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-700);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.resultado-desglose summary:hover {
-  background: var(--gray-100);
-}
-
-.resultado-desglose summary i {
-  color: var(--primary);
-}
-
-.desglose-content {
-  padding: 0 16px 16px;
-}
-
-.desglose-section {
-  margin-bottom: 16px;
-}
-
-.desglose-section:last-child {
-  margin-bottom: 0;
-}
-
-.desglose-section h5 {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--gray-400);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0 0 8px 0;
-}
-
-.desglose-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-size: 13px;
-}
-
-.desglose-row span:first-child {
-  color: var(--gray-500);
-}
-
-.desglose-row span:last-child {
-  font-weight: 600;
-  color: var(--gray-700);
-}
-
-/* Movimientos lista en corte */
-.corte-movimientos {
-  margin-top: 14px;
-  max-height: 160px;
-  overflow-y: auto;
-  background: var(--gray-50);
-  border-radius: 10px;
-  padding: 8px;
-}
-
-.mov-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-  background: white;
-  border-radius: 8px;
-  margin-bottom: 6px;
-  font-size: 13px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-}
-
-.mov-item:last-child {
-  margin-bottom: 0;
-}
-
-.mov-item.ingreso {
-  border-left: 3px solid var(--success);
-}
-
-.mov-item.egreso {
-  border-left: 3px solid var(--danger);
-}
-
-.mov-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.mov-tipo {
-  font-size: 16px;
-}
-
-.mov-concepto {
-  color: var(--gray-700);
-  font-weight: 500;
-}
-
-.mov-monto {
-  font-weight: 700;
-}
-
-.mov-item.ingreso .mov-monto { color: var(--success); }
-.mov-item.egreso .mov-monto { color: var(--danger); }
-
-.empty-movimientos {
-  text-align: center;
-  padding: 24px;
-  color: var(--gray-400);
-  font-size: 13px;
-}
-
-/* ============================================
-   Z-INDEX MODALES
-   ============================================ */
-#modal-admin-auth,
-#modal-confirm {
-  z-index: 10000 !important;
-}
-
-#modal-admin-auth .modal,
-#modal-confirm .modal {
-  z-index: 10001 !important;
-}
-
-#modal-cerrar-turno,
-#modal-resultado-corte {
-  z-index: 9000;
-}
-
-#modal-cerrar-turno .modal,
-#modal-resultado-corte .modal {
-  z-index: 9001;
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-  .app {
-    grid-template-columns: 1fr;
-  }
-  
-  .panel-payment {
-    display: none;
-  }
-  
-  .header-center {
-    display: none;
-  }
-  
-  .conteo-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .price-selector {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .turno-indicador span {
-    display: none;
-  }
-  
-  .turno-controls {
-    margin-left: 10px;
-  }
-}
-
-@media print {
-  body * { visibility: hidden; }
-  #print-content, #print-content * { visibility: visible; }
-  #print-content {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80mm;
-  }
-}
-/* ============================================
-   ESTILOS MODALES TURNOS Y MOVIMIENTOS
-   ============================================ */
-
-/* Form group general para modales de turno */
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gray-700);
-  margin-bottom: 8px;
-}
-
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius);
-  font-size: 14px;
-  color: var(--dark);
-  transition: var(--transition);
-  background: var(--white);
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(45, 61, 191, 0.1);
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 70px;
-}
-
-.form-group .input-icon {
-  position: relative;
-}
-
-.form-group .input-icon i {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gray-400);
-  font-size: 16px;
-}
-
-.form-group .input-icon input {
-  padding-left: 44px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* Turno info box */
-.turno-info-box {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  background: linear-gradient(135deg, rgba(45, 61, 191, 0.08) 0%, rgba(108, 43, 217, 0.08) 100%);
-  border-radius: var(--radius-lg);
-  margin-bottom: 24px;
-  border: 1px solid rgba(45, 61, 191, 0.15);
-}
-
-.turno-info-box i {
-  color: var(--primary);
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.turno-info-box p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--gray-600);
-  line-height: 1.5;
-}
-
-.turno-error {
-  color: var(--danger);
-  font-size: 13px;
-  margin-top: 12px;
-  min-height: 20px;
-  text-align: center;
-}
-
-/* Dropdown menu movimientos */
-.dropdown-menu {
-  position: fixed;
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-  padding: 8px;
-  z-index: 9999;
-  min-width: 200px;
-  border: 1px solid rgba(0,0,0,0.08);
-}
-
-.dropdown-menu button {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px 14px;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gray-700);
-  transition: var(--transition);
-}
-
-.dropdown-menu button:hover {
-  background: var(--gray-100);
-}
-
-.dropdown-menu .text-success { color: var(--success); }
-.dropdown-menu .text-danger { color: var(--danger); }
-
-/* ============================================
-   CONTEO DE EFECTIVO (Corte de caja)
-   ============================================ */
 .conteo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -3161,318 +2681,72 @@ body {
   font-weight: 800;
 }
 
-/* ============================================
-   RESULTADO DEL CORTE
-   ============================================ */
-.modal-header.success {
-  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%) !important;
-}
-
-.modal-header.warning {
-  background: linear-gradient(135deg, #d97706 0%, var(--warning) 100%) !important;
-}
-
-.resultado-principal {
-  text-align: center;
-  padding: 30px 20px;
-  border-radius: 16px;
-  margin-bottom: 20px;
-}
-
-.resultado-principal.success {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-}
-
-.resultado-principal.warning {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
-}
-
-.resultado-principal.danger {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
-}
-
-.resultado-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-}
-
-.resultado-principal.success .resultado-icon { color: var(--success); }
-.resultado-principal.warning .resultado-icon { color: var(--warning); }
-.resultado-principal.danger .resultado-icon { color: var(--danger); }
-
-.resultado-principal h2 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  color: var(--dark);
-}
-
-.resultado-principal p {
-  font-size: 14px;
-  color: var(--gray-500);
-  margin: 0;
-}
-
-/* Resumen resultado */
-.resultado-resumen {
+/* Movimientos lista en corte */
+.corte-movimientos {
+  margin-top: 14px;
+  max-height: 160px;
+  overflow-y: auto;
   background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 16px;
+  border-radius: 10px;
+  padding: 8px;
 }
 
-.resumen-row {
+.mov-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--gray-200);
+  padding: 10px 12px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
-.resumen-row:last-child {
-  border-bottom: none;
-}
-
-.resumen-row span {
-  color: var(--gray-500);
-  font-size: 14px;
-}
-
-.resumen-row strong {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--dark);
-}
-
-.resumen-row.diferencia {
-  margin-top: 8px;
-  padding-top: 12px;
-  border-top: 2px solid var(--gray-200);
-  border-bottom: none;
-}
-
-.resumen-row.diferencia.positivo strong { color: var(--success); }
-.resumen-row.diferencia.negativo strong { color: var(--danger); }
-
-/* Desglose desplegable */
-.resultado-desglose {
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.resultado-desglose summary {
-  padding: 14px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-700);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.resultado-desglose summary:hover {
-  background: var(--gray-100);
-}
-
-.resultado-desglose summary i {
-  color: var(--primary);
-}
-
-.desglose-content {
-  padding: 0 16px 16px;
-}
-
-.desglose-section {
-  margin-bottom: 16px;
-}
-
-.desglose-section:last-child {
+.mov-item:last-child {
   margin-bottom: 0;
 }
 
-.desglose-section h5 {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--gray-400);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0 0 8px 0;
+.mov-item.ingreso {
+  border-left: 3px solid var(--success);
 }
 
-.desglose-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-size: 13px;
+.mov-item.egreso {
+  border-left: 3px solid var(--danger);
 }
 
-.desglose-row span:first-child {
-  color: var(--gray-500);
-}
-
-.desglose-row span:last-child {
-  font-weight: 600;
-  color: var(--gray-700);
-}
-
-/* Corte body scroll */
-.corte-body {
-  max-height: 65vh;
-  overflow-y: auto;
-  padding: 0 !important;
-}
-
-.corte-seccion {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--gray-100);
-}
-
-.corte-seccion:last-of-type {
-  border-bottom: none;
-}
-
-.corte-seccion h4 {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--gray-400);
-  margin-bottom: 14px;
+.mov-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  gap: 10px;
 }
 
-.corte-seccion h4 i {
-  width: 18px;
-  color: var(--primary);
-}
-/* ============================================
-   CORTE DE CAJA - TABS
-   ============================================ */
-.corte-tabs {
-  display: flex;
-  border-bottom: 2px solid var(--gray-200);
-  background: var(--gray-50);
-}
-
-.corte-tab {
-  flex: 1;
-  padding: 14px 16px;
-  border: none;
-  background: none;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gray-500);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: var(--transition);
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
-}
-
-.corte-tab:hover {
-  color: var(--primary);
-  background: var(--gray-100);
-}
-
-.corte-tab.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-  background: var(--white);
-}
-
-.corte-tab i {
+.mov-tipo {
   font-size: 16px;
 }
 
-.corte-tab-content {
-  display: none;
-  animation: fadeIn 0.2s ease;
+.mov-concepto {
+  color: var(--gray-700);
+  font-weight: 500;
 }
 
-.corte-tab-content.active {
-  display: block;
-}
-
-.corte-hint {
-  font-size: 13px;
-  color: var(--gray-500);
-  margin-bottom: 16px;
-}
-
-/* Resumen turno grid */
-.resumen-turno-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.resumen-item {
-  padding: 14px;
-  background: var(--gray-50);
-  border-radius: var(--radius);
-  text-align: center;
-}
-
-.resumen-label {
-  display: block;
-  font-size: 11px;
-  color: var(--gray-500);
-  margin-bottom: 4px;
-}
-
-.resumen-value {
-  display: block;
-  font-size: 18px;
+.mov-monto {
   font-weight: 700;
-  color: var(--dark);
 }
 
-.resumen-value.success { color: var(--success); }
-.resumen-value.danger { color: var(--danger); }
+.mov-item.ingreso .mov-monto { color: var(--success); }
+.mov-item.egreso .mov-monto { color: var(--danger); }
 
-/* Esperado */
-.resumen-esperado {
-  background: var(--gray-800);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 16px;
+.empty-movimientos {
+  text-align: center;
+  padding: 24px;
+  color: var(--gray-400);
+  font-size: 13px;
 }
 
-.esperado-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  color: white;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.esperado-row:last-child {
-  border-bottom: none;
-}
-
-.esperado-row span {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-.esperado-row strong {
-  font-size: 18px;
-}
-
-.esperado-row.diferencia strong.positivo { color: #34d399; }
-.esperado-row.diferencia strong.negativo { color: #f87171; }
-.esperado-row.diferencia strong.cero { color: white; }
-
-/* Resultado del Corte */
+/* ============================================
+   RESULTADO DEL CORTE
+   ============================================ */
 .resultado-principal {
   text-align: center;
   padding: 24px;
@@ -3500,63 +2774,94 @@ body {
   margin-bottom: 12px;
 }
 
+.resultado-principal.success .resultado-icon { color: var(--success); }
+.resultado-principal.warning .resultado-icon { color: var(--warning); }
+.resultado-principal.danger .resultado-icon { color: var(--danger); }
+
 .resultado-principal h2 {
-  margin: 0 0 8px;
-  font-size: 1.5rem;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
 }
 
 .resultado-principal p {
+  font-size: 14px;
   margin: 0;
   opacity: 0.8;
 }
 
+/* Secciones del resultado */
 .resultado-seccion {
   background: var(--gray-50);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 12px;
 }
 
 .resultado-seccion h4 {
   margin: 0 0 12px;
-  font-size: 0.85rem;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--gray-500);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
+/* Sección cuadre - FONDO OSCURO CON TEXTO BLANCO */
 .resultado-seccion.cuadre {
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  color: white;
+}
+
+.resultado-seccion.cuadre h4 {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .resultado-seccion.cuadre .resumen-row {
-  color: white;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
-.resultado-seccion.cuadre .resumen-row span:first-child {
+.resultado-seccion.cuadre .resumen-row span {
   color: rgba(255, 255, 255, 0.8);
 }
 
-.resultado-seccion.cuadre .resumen-row span:last-child {
+.resultado-seccion.cuadre .resumen-row strong {
   color: white;
 }
 
+/* Resumen grid y rows */
 .resumen-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .resumen-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.resumen-row:last-child {
+  border-bottom: none;
+}
+
+.resumen-row span {
+  color: var(--gray-600);
+  font-size: 14px;
+}
+
+.resumen-row strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
 }
 
 .resumen-row.sub {
-  font-size: 0.9rem;
+  font-size: 13px;
+}
+
+.resumen-row.sub span {
   color: var(--gray-500);
 }
 
@@ -3565,27 +2870,105 @@ body {
 }
 
 .resumen-row.grande {
-  font-size: 1.1rem;
-  padding: 8px 0;
+  font-size: 16px;
+  padding: 10px 0;
+}
+
+.resumen-row.grande strong {
+  font-size: 18px;
 }
 
 .resumen-row.diferencia {
-  border-top: 1px solid rgba(255,255,255,0.2);
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
   padding-top: 12px;
   margin-top: 8px;
+  border-bottom: none;
 }
 
 .resumen-row.diferencia.positivo strong {
-  color: #fbbf24;
+  color: #fbbf24 !important;
 }
 
 .resumen-row.diferencia.negativo strong {
-  color: #f87171;
+  color: #f87171 !important;
 }
 
-.text-success { color: #10b981; }
-.text-danger { color: #ef4444; }
+/* Header del resultado con colores dinámicos */
+#resultado-corte-header.success {
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+}
 
-#resultado-corte-header.success { background: linear-gradient(135deg, #10b981, #059669); }
-#resultado-corte-header.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
-#resultado-corte-header.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+#resultado-corte-header.warning {
+  background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+}
+
+#resultado-corte-header.danger {
+  background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
+}
+
+/* ============================================
+   Z-INDEX MODALES
+   ============================================ */
+#modal-admin-auth,
+#modal-confirm {
+  z-index: 10000 !important;
+}
+
+#modal-admin-auth .modal,
+#modal-confirm .modal {
+  z-index: 10001 !important;
+}
+
+#modal-cerrar-turno,
+#modal-resultado-corte {
+  z-index: 9000;
+}
+
+#modal-cerrar-turno .modal,
+#modal-resultado-corte .modal {
+  z-index: 9001;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+  
+  .panel-payment {
+    display: none;
+  }
+  
+  .header-center {
+    display: none;
+  }
+  
+  .conteo-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .price-selector {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .turno-indicador span {
+    display: none;
+  }
+  
+  .turno-controls {
+    margin-left: 10px;
+  }
+}
+
+@media print {
+  body * { visibility: hidden; }
+  #print-content, #print-content * { visibility: visible; }
+  #print-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+  }
+}
