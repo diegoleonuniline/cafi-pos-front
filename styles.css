@@ -3526,7 +3526,19 @@ body {
 }
 
 .resultado-seccion.cuadre {
-  background: var(--gray-800);
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: white;
+}
+
+.resultado-seccion.cuadre .resumen-row {
+  color: white;
+}
+
+.resultado-seccion.cuadre .resumen-row span:first-child {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.resultado-seccion.cuadre .resumen-row span:last-child {
   color: white;
 }
 
