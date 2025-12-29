@@ -2352,34 +2352,30 @@ function cerrarMenuMovimientosHandler(e) {
 // ============================================
 // CORTE DE CAJA - TABS
 // ============================================
+// ============================================
+// CORTE DE CAJA - TABS (solo 2 tabs ahora)
+// ============================================
 let corteTabActual = 0;
 
 function cambiarTabCorte(index) {
   corteTabActual = index;
   
-  // Actualizar tabs
   document.querySelectorAll('.corte-tab').forEach((tab, i) => {
     tab.classList.toggle('active', i === index);
   });
   
-  // Actualizar contenido
   document.querySelectorAll('.corte-tab-content').forEach((content, i) => {
     content.classList.toggle('active', i === index);
   });
   
-  // Actualizar botones
+  // Solo 2 tabs: 0=Efectivo, 1=Otros
   Utils.$('btn-tab-anterior').style.display = index > 0 ? 'inline-flex' : 'none';
-  Utils.$('btn-tab-siguiente').style.display = index < 2 ? 'inline-flex' : 'none';
-  Utils.$('btn-calcular-corte').style.display = index === 2 ? 'inline-flex' : 'none';
-  
-  // Si es el tab de resumen, actualizar valores
-  if (index === 2) {
-    actualizarResumenCorte();
-  }
+  Utils.$('btn-tab-siguiente').style.display = index < 1 ? 'inline-flex' : 'none';
+  Utils.$('btn-calcular-corte').style.display = index === 1 ? 'inline-flex' : 'none';
 }
 
 function tabSiguienteCorte() {
-  if (corteTabActual < 2) {
+  if (corteTabActual < 1) {
     cambiarTabCorte(corteTabActual + 1);
   }
 }
@@ -2428,26 +2424,12 @@ function calcularTotalCorte() {
   
   const totalOtros = tarjeta + transferencia + otro;
   Utils.$('total-otros-metodos').textContent = Utils.formatMoney(totalOtros);
-  
-  const totalDeclarado = efectivo + totalOtros;
-  Utils.$('total-declarado').textContent = Utils.formatMoney(totalDeclarado);
-}
-
-function actualizarResumenCorte() {
-  const efectivoContado = parseFloat(Utils.$('total-efectivo-contado')?.textContent.replace(/[^0-9.-]/g, '')) || 0;
-  const saldoInicial = Turno.actual?.saldoInicial || 0;
-  
-  Utils.$('resumen-saldo-inicial').textContent = Utils.formatMoney(saldoInicial);
-  Utils.$('resumen-efectivo-contado').textContent = Utils.formatMoney(efectivoContado);
-  
-  calcularTotalCorte();
 }
 
 function resetCorteForm() {
   corteTabActual = 0;
   cambiarTabCorte(0);
   
-  // Reset conteo
   ['1000','500','200','100','50','20','m20','10','5','2','1','050'].forEach(id => {
     const el = Utils.$('conteo-' + id);
     if (el) el.value = 0;
@@ -2462,8 +2444,9 @@ function resetCorteForm() {
   Utils.$('total-otros-metodos').textContent = '$0.00';
   Utils.$('corte-observaciones').value = '';
 }
+
 // ============================================
-// PROCESAR CORTE DE CAJA
+// PROCESAR CORTE - Muestra modal resultado
 // ============================================
 async function procesarCorte() {
   if (!Turno.actual || !Turno.actual.id) {
@@ -2471,13 +2454,27 @@ async function procesarCorte() {
     return;
   }
   
+  // Recolectar datos contados
+  const efectivoContado = parseFloat(Utils.$('total-efectivo-contado')?.textContent.replace(/[^0-9.-]/g, '')) || 0;
+  const tarjetaContada = parseFloat(Utils.$('corte-tarjeta')?.value) || 0;
+  const transferenciaContada = parseFloat(Utils.$('corte-transferencia')?.value) || 0;
+  const otroContado = parseFloat(Utils.$('corte-otro')?.value) || 0;
+  
+  // Guardar en Turno para uso posterior
+  Turno.conteoActual = {
+    efectivo: efectivoContado,
+    tarjeta: tarjetaContada,
+    transferencia: transferenciaContada,
+    otro: otroContado,
+    total: efectivoContado + tarjetaContada + transferenciaContada + otroContado
+  };
+  
   const btn = Utils.$('btn-calcular-corte');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
+  Toast.loading('Calculando corte...');
   
   try {
-    const efectivoContado = parseFloat(Utils.$('total-efectivo-contado')?.textContent.replace(/[^0-9.-]/g, '')) || 0;
-    
     const resumen = await API.calcularResumenTurno({
       turnoID: Turno.actual.id,
       empresaID: State.usuario.empresaID,
@@ -2485,56 +2482,19 @@ async function procesarCorte() {
       usuarioEmail: State.usuario.email
     });
     
+    Toast.hide();
+    
     if (!resumen.success) {
       Toast.error(resumen.error || 'Error al calcular resumen');
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-calculator"></i> Cerrar Turno';
       return;
     }
     
-    const r = resumen.resumen;
+    // Guardar datos del corte
+    Turno.datosCorte = resumen.resumen;
     
-    Utils.$('resumen-saldo-inicial').textContent = Utils.formatMoney(r.saldoInicial);
-    Utils.$('resumen-ventas').textContent = Utils.formatMoney(r.ventasTotales);
-    Utils.$('resumen-ingresos').textContent = Utils.formatMoney(r.ingresos);
-    Utils.$('resumen-egresos').textContent = Utils.formatMoney(r.egresos);
-    Utils.$('resumen-efectivo-esperado').textContent = Utils.formatMoney(r.efectivoEsperado);
-    Utils.$('resumen-efectivo-contado').textContent = Utils.formatMoney(efectivoContado);
+    // Mostrar modal de resultado
+    Turno.mostrarResultado();
     
-    const diferencia = efectivoContado - r.efectivoEsperado;
-    const difEl = Utils.$('resumen-diferencia');
-    difEl.textContent = Utils.formatMoney(diferencia);
-    difEl.className = diferencia > 0 ? 'positivo' : diferencia < 0 ? 'negativo' : 'cero';
-    
-    const confirmado = await Confirm.show(
-      '¿Cerrar turno?',
-      `Efectivo esperado: ${Utils.formatMoney(r.efectivoEsperado)}\nEfectivo contado: ${Utils.formatMoney(efectivoContado)}\nDiferencia: ${Utils.formatMoney(diferencia)}`
-    );
-    
-    if (!confirmado) {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-calculator"></i> Cerrar Turno';
-      return;
-    }
-    
-    const resultado = await API.cerrarTurno({
-      turnoID: Turno.actual.id,
-      empresaID: State.usuario.empresaID,
-      sucursalID: State.usuario.sucursalID,
-      usuarioEmail: State.usuario.email,
-      efectivoReal: efectivoContado,
-      observaciones: Utils.$('corte-observaciones')?.value || ''
-    });
-    
-    if (resultado.success) {
-      Modal.cerrar('modal-cerrar-turno');
-      Turno.actual = null;
-      Turno.actualizarUI(false);
-      Toast.success('Turno cerrado correctamente');
-      resetCorteForm();
-    } else {
-      Toast.error(resultado.error || 'Error al cerrar turno');
-    }
   } catch (e) {
     console.error('Error en corte:', e);
     Toast.error('Error de conexión');
