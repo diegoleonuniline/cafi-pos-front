@@ -1858,12 +1858,12 @@ const Turno = {
     Toast.loading('Calculando corte...');
     
     try {
-      const res = await API.calcularResumenTurno(
-        this.actual.id,
-        State.usuario.empresaID,
-        State.usuario.sucursalID,
-        State.usuario.email
-      );
+   const res = await API.calcularResumenTurno({
+  turnoID: this.actual.id,
+  empresaID: State.usuario.empresaID,
+  sucursalID: State.usuario.sucursalID,
+  usuarioEmail: State.usuario.email
+});
       
       Toast.hide();
       
