@@ -3471,3 +3471,109 @@ body {
 .esperado-row.diferencia strong.positivo { color: #34d399; }
 .esperado-row.diferencia strong.negativo { color: #f87171; }
 .esperado-row.diferencia strong.cero { color: white; }
+
+/* Resultado del Corte */
+.resultado-principal {
+  text-align: center;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.resultado-principal.success {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #065f46;
+}
+
+.resultado-principal.warning {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+}
+
+.resultado-principal.danger {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #991b1b;
+}
+
+.resultado-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.resultado-principal h2 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+}
+
+.resultado-principal p {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.resultado-seccion {
+  background: var(--gray-50);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.resultado-seccion h4 {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resultado-seccion.cuadre {
+  background: var(--gray-800);
+  color: white;
+}
+
+.resumen-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resumen-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.resumen-row.sub {
+  font-size: 0.9rem;
+  color: var(--gray-500);
+}
+
+.resumen-row .indent {
+  padding-left: 20px;
+}
+
+.resumen-row.grande {
+  font-size: 1.1rem;
+  padding: 8px 0;
+}
+
+.resumen-row.diferencia {
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.resumen-row.diferencia.positivo strong {
+  color: #fbbf24;
+}
+
+.resumen-row.diferencia.negativo strong {
+  color: #f87171;
+}
+
+.text-success { color: #10b981; }
+.text-danger { color: #ef4444; }
+
+#resultado-corte-header.success { background: linear-gradient(135deg, #10b981, #059669); }
+#resultado-corte-header.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+#resultado-corte-header.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
